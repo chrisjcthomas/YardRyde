@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Simplified Rider Map View</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#17a14e", // Jamaican Green
+                        "primary-dark": "#117a3a",
+                        "accent": "#facc15", // Jamaican Yellow
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "neutral-surface": "#e8ebe9", // Light greenish grey
+                        "neutral-surface-dark": "#1a2e22",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(23, 161, 78, 0.1)',
+                        'floating': '0 8px 30px -4px rgba(0, 0, 0, 0.1)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .map-bg {
+            background-color: #e5e7eb;
+            background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDK5L53fncq_ZtTQ7kJlh5wIevn_5JI4_LKCVch_-q7_6KBjmb7ljqSNQuyZfCJ8zZAz5q6_E4I8xIIOvUG2v78LT26IhJcv2cHRaBv4y8un6PmMshh3gHH-2RVDNubA1hBRs1hrGS_Gu8GhAt0f-JAKgTnRASYi7MPM62OhwF-RZUcntA4aPTr-P15qI8XdgHuS6__CMoxhWdQWe4nWSdkgnrwpQGZOxkAcHWvwSUJhth-Dw5FkZm7KVGrh9GxxW_ba1vy3unu75D-);
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(0.2) contrast(1.1) brightness(1.1)
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px)
+        }
+        .dark .glass-panel {
+            background: rgba(17, 33, 23, 0.95)
+        }
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.33);
+            } 80%, 100% {
+                opacity: 0;
+            }
+        }
+        .pulse-ring {
+            position: relative
+        }
+        .pulse-ring::before {
+            content: "";
+            position: absolute;
+            left: -4px;
+            top: -4px;
+            width: calc(100% + 8px);
+            height: calc(100% + 8px);
+            background-color: #17a14e;
+            border-radius: 50%;
+            animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+            opacity: 0.4
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 h-screen w-screen overflow-hidden flex flex-col relative">
+<header class="absolute top-0 left-0 right-0 z-20 p-6 pointer-events-none flex justify-center">
+<div class="glass-panel pointer-events-auto px-6 py-3 rounded-full shadow-floating flex items-center gap-4 border border-primary/10 dark:border-primary/20">
+<h1 class="font-bold text-lg tracking-wide uppercase text-gray-900 dark:text-white flex items-center gap-2">
+<span class="material-icons-round text-primary">directions_bus</span>
+                KINGSTON TRANSIT
+            </h1>
+<div class="h-4 w-px bg-gray-300 dark:bg-gray-600"></div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary pulse-ring"></div>
+<span class="text-sm font-medium text-primary">Live Connection</span>
+</div>
+</div>
+</header>
+<main class="absolute inset-0 z-0 bg-gray-200">
+<div class="w-full h-full relative overflow-hidden">
+<img alt="Abstract light map view of city streets with green hues" class="w-full h-full object-cover opacity-60 grayscale mix-blend-multiply" data-alt="Abstract light map view of city streets with green hues" data-location="Kingston" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq3lAbCiHNWZARur7PqDGXL7toPSCOGk-lr7zcFQsEbv6dbJB7N5BWCKJHIVGi5vimTpO-QMA1O78c9woZM3butHWu3DmpiQPUec6sveuTtNHm5z0dY3eMoXmytcUG4GSWGL9ZTTL4f91S7sDx2ErnPFapZtbLpJhhrMxyMT9j0X2tW60s-hrO-OVIjlWWFGJcghobNuukgvyott5dj_H0cxYPEIt_1kyK9ofmDUMYvcRMJDRpMmC1_tq6ookDTKJip0Fi-dwUUMPB"/>
+<div class="absolute inset-0 bg-primary/5 mix-blend-overlay pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform duration-300">
+<div class="bg-white dark:bg-neutral-surface-dark px-3 py-1.5 rounded-lg shadow-lg mb-2 border border-gray-100 dark:border-gray-700 whitespace-nowrap">
+<span class="font-bold text-sm text-gray-900 dark:text-white">~4 min</span>
+</div>
+<div class="relative">
+<div class="w-14 h-14 bg-primary rounded-full shadow-xl flex items-center justify-center border-[3px] border-white dark:border-gray-800 z-20 relative">
+<span class="text-white font-black text-lg">800</span>
+</div>
+<div class="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-primary rotate-45 z-10 border-b-[3px] border-r-[3px] border-white dark:border-gray-800"></div>
+</div>
+</div>
+<div class="absolute top-[35%] left-[65%] z-0 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-300">
+<div class="bg-white dark:bg-neutral-surface-dark px-2 py-1 rounded-md shadow-md mb-2 border border-gray-100 dark:border-gray-700 whitespace-nowrap opacity-90">
+<span class="font-bold text-xs text-gray-800 dark:text-gray-200">~12 min</span>
+</div>
+<div class="relative">
+<div class="w-10 h-10 bg-primary/90 rounded-full shadow-lg flex items-center justify-center border-2 border-white dark:border-gray-800">
+<span class="text-white font-bold text-xs">76</span>
+</div>
+<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary/90 rotate-45 -z-10"></div>
+</div>
+</div>
+<div class="absolute top-[60%] left-[40%] z-20 flex flex-col items-center cursor-pointer hover:scale-105 transition-transform duration-300">
+<div class="bg-accent text-black px-3 py-1 rounded-full shadow-lg mb-2 text-xs font-bold uppercase tracking-wide flex items-center gap-1 border-2 border-white">
+<span>DELAY</span> <span>⏱️</span>
+</div>
+<div class="relative">
+<div class="w-10 h-10 bg-gray-700 dark:bg-gray-600 rounded-full shadow-md flex items-center justify-center border-2 border-white dark:border-gray-800">
+<span class="text-white font-bold text-xs">900</span>
+</div>
+<div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-700 dark:bg-gray-600 rotate-45 -z-10"></div>
+</div>
+</div>
+</div>
+</main>
+<div class="absolute bottom-10 left-0 right-0 z-30 flex justify-center pointer-events-none">
+<button class="pointer-events-auto bg-primary hover:bg-primary-dark text-white font-bold py-4 px-8 rounded-full shadow-floating shadow-primary/30 flex items-center justify-center gap-3 transition-all transform hover:scale-105 active:scale-95 group text-lg border-4 border-white dark:border-neutral-surface-dark">
+<span class="text-2xl group-hover:animate-bounce">😊</span>
+            Report Vibe
+        </button>
+</div>
+<div class="absolute bottom-8 right-8 flex flex-col gap-3 pointer-events-auto z-30">
+<button class="w-12 h-12 bg-white dark:bg-neutral-surface-dark rounded-xl shadow-soft flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 transition-colors border border-gray-100 dark:border-gray-700">
+<span class="material-icons-round text-xl">my_location</span>
+</button>
+<div class="flex flex-col bg-white dark:bg-neutral-surface-dark rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 overflow-hidden">
+<button class="w-12 h-12 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 border-b border-gray-100 dark:border-gray-700 hover:text-primary transition-colors">
+<span class="material-icons-round text-xl">add</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 hover:text-primary transition-colors">
+<span class="material-icons-round text-xl">remove</span>
+</button>
+</div>
+</div>
+
+</body></html>

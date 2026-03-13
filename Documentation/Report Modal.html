@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Report Vibe Modal - Transit Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#17a14e",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark h-screen overflow-hidden flex flex-col relative">
+<!-- Navbar Overlay -->
+<div class="absolute top-0 left-0 w-full z-20 p-4 pointer-events-none">
+<div class="bg-white/90 dark:bg-background-dark/90 backdrop-blur-md rounded-lg shadow-sm border border-primary/10 p-4 flex justify-between items-center pointer-events-auto max-w-7xl mx-auto">
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 p-2 rounded text-primary">
+<span class="material-icons">directions_bus</span>
+</div>
+<span class="text-xl font-bold text-gray-900 dark:text-white">Kingston Transit</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Routes</button>
+<button class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Schedule</button>
+<div class="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-icons text-primary text-sm">person</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Background Context -->
+<div class="absolute inset-0 z-0 bg-gray-200 dark:bg-gray-800">
+<!-- Abstract representation of a map -->
+<div class="w-full h-full relative overflow-hidden" data-alt="Map view of Kingston Jamaica with street details" data-location="Kingston, Jamaica" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUyFoQFY6OX5T8DwmwIT8Pg0yPavqUgGab6SE-4WGmD7dbOlfGpCbHQKvUgkGNEwo9G92Fe8lW0PQRsVBmoYMpOoKyqipVDmIokxL-n7r2Mu4ZUhdjlXIix2ouny4Wrv7M9pQTsgBMAUd0fmL4IS790vW2iwOhIM81cnBhxZuM7nsM6iz-dfqboDWYuINzijAhp3uS-lUT2oQF8X_bhK6yBYB7gKKSQ_-Pc-VbHAW4tD2a6XAxtBwkrj8KE5LXNmC6UniBzE0u47xv'); background-size: cover; background-position: center;">
+<!-- Map Overlay Dimmer -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+<!-- Simulated Map Pins for context (behind modal) -->
+<div class="absolute top-1/3 left-1/4 transform -translate-x-1/2 -translate-y-1/2">
+<div class="relative">
+<div class="w-4 h-4 bg-primary rounded-full animate-ping absolute"></div>
+<div class="w-4 h-4 bg-primary rounded-full relative border-2 border-white shadow-lg"></div>
+</div>
+</div>
+<div class="absolute bottom-1/4 right-1/3 transform">
+<div class="w-3 h-3 bg-red-500 rounded-full border border-white shadow-lg"></div>
+</div>
+</div>
+</div>
+<!-- Modal Container -->
+<div class="absolute inset-0 z-30 flex items-center justify-center p-4">
+<!-- Modal Card -->
+<div class="w-full max-w-lg bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-800 transform transition-all scale-100 opacity-100">
+<!-- Modal Header -->
+<div class="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-800">
+<div>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">How's the ride?</h2>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Bus #42 • Half Way Tree to Downtown</p>
+</div>
+<button class="group p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<span class="material-icons text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200">close</span>
+</button>
+</div>
+<!-- Modal Body: Action Grid -->
+<div class="p-8">
+<div class="grid grid-cols-2 gap-6">
+<!-- Button 1: Delay -->
+<button class="group relative flex flex-col items-center justify-center h-32 w-full rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<div class="mb-3 p-3 rounded-full bg-orange-50 dark:bg-orange-900/20 group-hover:scale-110 transition-transform duration-200">
+<span class="text-3xl">⏱️</span>
+</div>
+<span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">Delay</span>
+</button>
+<!-- Button 2: Crowded -->
+<button class="group relative flex flex-col items-center justify-center h-32 w-full rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<div class="mb-3 p-3 rounded-full bg-purple-50 dark:bg-purple-900/20 group-hover:scale-110 transition-transform duration-200">
+<span class="text-3xl">👥</span>
+</div>
+<span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">Crowded</span>
+</button>
+<!-- Button 3: Cold AC -->
+<button class="group relative flex flex-col items-center justify-center h-32 w-full rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<div class="mb-3 p-3 rounded-full bg-blue-50 dark:bg-blue-900/20 group-hover:scale-110 transition-transform duration-200">
+<span class="text-3xl">❄️</span>
+</div>
+<span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">Cold AC</span>
+</button>
+<!-- Button 4: Standing -->
+<button class="group relative flex flex-col items-center justify-center h-32 w-full rounded-xl border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+<div class="mb-3 p-3 rounded-full bg-yellow-50 dark:bg-yellow-900/20 group-hover:scale-110 transition-transform duration-200">
+<span class="text-3xl">🧍</span>
+</div>
+<span class="font-semibold text-gray-700 dark:text-gray-200 group-hover:text-primary transition-colors">Standing Room</span>
+</button>
+</div>
+<!-- Optional Context / Footer Text -->
+<div class="mt-8 text-center">
+<p class="text-xs text-gray-400 dark:text-gray-500">
+                        Your report helps others plan their trip. 
+                        <a class="text-primary hover:underline" href="#">Learn more</a>
+</p>
+</div>
+</div>
+<!-- Bottom subtle progress bar to indicate quick action nature (visual flair) -->
+<div class="h-1 w-full bg-gray-100 dark:bg-gray-800 rounded-b-xl overflow-hidden">
+<div class="h-full bg-primary w-0"></div>
+</div>
+</div>
+</div>
+<!-- Success Toast Notification (Hidden by default, shown for visual completeness) -->
+<!-- In a real app this would trigger after click. Here displayed statically to show style -->
+<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none opacity-0"> <!-- Add 'opacity-100' to see it -->
+<div class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-full shadow-lg flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check_circle</span>
+<span class="text-sm font-semibold">Report submitted!</span>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,960 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --app-bg: #ece8de;
+  --panel-bg: rgba(255, 252, 247, 0.86);
+  --panel-bg-strong: rgba(255, 252, 247, 0.96);
+  --border: rgba(20, 34, 24, 0.12);
+  --border-strong: rgba(20, 34, 24, 0.18);
+  --text: #152218;
+  --muted: #617067;
+  --subtle: #f3efe6;
+  --accent: #178c4f;
+  --accent-strong: #0f6a3b;
+  --shadow: 0 26px 50px rgba(20, 34, 24, 0.12);
+}
+
+body[data-theme='dark'] {
+  color-scheme: dark;
+  --app-bg: #09120f;
+  --panel-bg: rgba(10, 20, 16, 0.86);
+  --panel-bg-strong: rgba(10, 20, 16, 0.96);
+  --border: rgba(234, 242, 238, 0.08);
+  --border-strong: rgba(234, 242, 238, 0.14);
+  --text: #eef6f1;
+  --muted: #97a99e;
+  --subtle: #10201a;
+  --accent: #4dd187;
+  --accent-strong: #78e8a6;
+  --shadow: 0 28px 56px rgba(0, 0, 0, 0.34);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(23, 140, 79, 0.16), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.08), transparent 22%),
+    var(--app-bg);
+  color: var(--text);
+}
+
+.app-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(23, 140, 79, 0.16), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.08), transparent 22%),
+    var(--app-bg);
+  color: var(--text);
+  font-weight: 700;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+.rider-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+}
+
+.rider-sidebar {
+  min-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-card,
+.rider-map-card {
+  border: 1px solid var(--border);
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+  border-radius: 28px;
+}
+
+.dashboard-card {
+  padding: 24px;
+}
+
+.dashboard-card--tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+.hero-topline,
+.section-heading,
+.section-actions,
+.route-card,
+.route-card-header,
+.map-topbar,
+.map-overlay,
+.activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hero-topline {
+  align-items: flex-start;
+}
+
+.eyebrow,
+.metric-label,
+.field-label,
+.detail-chip-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.eyebrow {
+  margin-bottom: 8px;
+}
+
+.hero-title {
+  font-size: clamp(1.9rem, 4vw, 2.5rem);
+  line-height: 1.02;
+}
+
+.hero-copy,
+.section-copy,
+.trip-card-copy,
+.activity-copy p,
+.vehicle-card p,
+.metric-subtle,
+.section-note {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.hero-copy {
+  margin-top: 14px;
+  max-width: 30ch;
+}
+
+.theme-toggle,
+.ghost-action,
+.text-action,
+.panel-tab,
+.route-watch,
+.stop-chip,
+.vehicle-card,
+.activity-item,
+.report-card {
+  transition: 180ms ease;
+}
+
+.theme-toggle,
+.ghost-action {
+  border: 1px solid var(--border-strong);
+  background: var(--panel-bg-strong);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.ghost-action--chrome {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f8fafc;
+}
+
+body[data-theme='dark'] .ghost-action--chrome {
+  background: rgba(10, 20, 16, 0.5);
+}
+
+.text-action {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+
+.summary-grid,
+.detail-metrics,
+.report-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.summary-grid {
+  margin-top: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metric-card,
+.detail-chip,
+.trip-card,
+.route-card,
+.vehicle-card,
+.report-card,
+.activity-item,
+.field select,
+.stop-chip {
+  border: 1px solid var(--border);
+  background: var(--subtle);
+}
+
+.metric-card {
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-value,
+.vehicle-eta,
+.report-count {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.panel-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.panel-tab {
+  border: 1px solid var(--border);
+  background: var(--subtle);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.panel-tab.is-active,
+.theme-toggle:hover,
+.ghost-action:hover,
+.route-watch.is-active,
+.text-action:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.panel-tab.is-active {
+  background: rgba(23, 140, 79, 0.14);
+}
+
+.panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+}
+
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title,
+.subsection-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.route-grid,
+.vehicle-list,
+.trip-results,
+.activity-list,
+.stop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.route-card,
+.trip-card,
+.vehicle-card,
+.activity-item {
+  border-radius: 20px;
+  padding: 14px 16px;
+}
+
+.route-card {
+  align-items: stretch;
+  border-color: color-mix(in srgb, var(--route-color) 24%, var(--border));
+}
+
+.route-card.is-active {
+  box-shadow: inset 0 0 0 1px var(--route-color);
+}
+
+.route-card-select {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.route-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--route-color);
+  color: white;
+  font-weight: 700;
+}
+
+.route-meta,
+.route-card-stats,
+.report-caption,
+.activity-action {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.route-card-title {
+  display: block;
+  margin: 12px 0 10px;
+}
+
+.route-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.route-watch {
+  align-self: center;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--panel-bg-strong);
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.detail-metrics,
+.report-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.detail-chip {
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field select {
+  border-radius: 16px;
+  padding: 12px 14px;
+  color: var(--text);
+  outline: none;
+}
+
+.field select:focus {
+  border-color: var(--accent);
+}
+
+.trip-card,
+.report-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.report-card {
+  border-radius: 20px;
+  padding: 16px;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: flex-start;
+  border-color: color-mix(in srgb, var(--report-color) 32%, var(--border));
+}
+
+.report-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.report-count {
+  color: var(--report-color);
+}
+
+.empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: 18px;
+  padding: 18px;
+  color: var(--muted);
+}
+
+.stop-chip,
+.vehicle-card,
+.activity-item {
+  cursor: pointer;
+  text-align: left;
+}
+
+.stop-chip {
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stop-chip small,
+.activity-action {
+  font-weight: 600;
+}
+
+.activity-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.activity-copy {
+  flex: 1;
+}
+
+.rider-map-panel {
+  min-height: calc(100vh - 48px);
+}
+
+.rider-map-card {
+  height: 100%;
+  min-height: calc(100vh - 48px);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.map-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+}
+
+.map-canvas,
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  font-family: inherit;
+}
+
+.map-overlay {
+  border-radius: 20px;
+  padding: 14px 16px;
+  background: rgba(13, 23, 18, 0.76);
+  color: #f8fafc;
+}
+
+.map-popup p {
+  margin-top: 4px;
+  color: #475569;
+}
+
+.custom-eta-label {
+  background: transparent;
+  border: 0;
+}
+
+.theme-toggle:hover,
+.ghost-action:hover,
+.panel-tab:hover,
+.route-watch:hover,
+.vehicle-card:hover,
+.activity-item:hover,
+.stop-chip:hover,
+.report-card:hover {
+  transform: translateY(-1px);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(97, 112, 103, 0.45);
+  border-radius: 999px;
+}
+
+@media (max-width: 1080px) {
+  .rider-shell {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .rider-sidebar,
+  .rider-map-panel,
+  .rider-map-card {
+    min-height: auto;
+  }
+
+  .rider-map-card {
+    min-height: 64vh;
+  }
+}
+
+@media (max-width: 720px) {
+  .summary-grid,
+  .detail-metrics,
+  .report-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-topline,
+  .section-heading,
+  .trip-card,
+  .route-card,
+  .map-topbar,
+  .map-overlay {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .route-watch,
+  .ghost-action,
+  .theme-toggle {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.nyc-shell {
+  position: relative;
+  min-height: 100vh;
+  background: #04070d;
+  color: #f8fafc;
+  overflow: hidden;
+}
+
+.nyc-map {
+  position: absolute;
+  inset: 0;
+}
+
+.nyc-topbar,
+.nyc-panel,
+.nyc-config-card {
+  position: relative;
+  z-index: 2;
+}
+
+.nyc-topbar {
+  margin: 20px 20px 0;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(7, 12, 22, 0.82);
+  backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: min(720px, calc(100vw - 40px));
+}
+
+.nyc-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nyc-brand h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.02;
+}
+
+.nyc-brand p,
+.nyc-status-row,
+.nyc-section-header p,
+.nyc-arrival-card p,
+.nyc-trip-copy,
+.nyc-trip-step p,
+.nyc-empty-state p {
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.nyc-mode-tag {
+  align-self: flex-start;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(77, 209, 135, 0.18);
+  color: #84f4b2;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nyc-topbar-actions,
+.nyc-toolbar-grid,
+.nyc-status-row,
+.nyc-panel-tabs,
+.nyc-summary-row,
+.nyc-section-header,
+.nyc-arrival-title,
+.nyc-trip-topline,
+.nyc-trip-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nyc-topbar-actions,
+.nyc-status-row,
+.nyc-section-header,
+.nyc-trip-topline,
+.nyc-trip-meta {
+  justify-content: space-between;
+}
+
+.nyc-toolbar-grid {
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.nyc-field {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nyc-field-label,
+.nyc-summary-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.nyc-input,
+.pac-target-input {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(15, 23, 42, 0.7);
+  color: #f8fafc;
+  padding: 14px 16px;
+  outline: none;
+}
+
+.nyc-input::placeholder {
+  color: rgba(148, 163, 184, 0.74);
+}
+
+.nyc-input:focus {
+  border-color: rgba(77, 209, 135, 0.7);
+  box-shadow: 0 0 0 3px rgba(77, 209, 135, 0.16);
+}
+
+.nyc-primary-button,
+.nyc-secondary-button,
+.nyc-panel-tab,
+.nyc-arrival-card,
+.nyc-trip-card,
+.nyc-bus-marker {
+  transition: 180ms ease;
+}
+
+.nyc-primary-button,
+.nyc-secondary-button {
+  border-radius: 999px;
+  padding: 11px 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.nyc-primary-button {
+  background: #4dd187;
+  color: #052e16;
+  font-weight: 700;
+}
+
+.nyc-secondary-button {
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #f8fafc;
+}
+
+.nyc-panel {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2;
+  max-width: 460px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(7, 12, 22, 0.84);
+  backdrop-filter: blur(22px);
+  padding: 18px;
+  max-height: min(58vh, 720px);
+  overflow: auto;
+}
+
+.nyc-panel-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nyc-panel-tab {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.78);
+  color: #f8fafc;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.nyc-panel-tab.is-active,
+.nyc-primary-button:hover,
+.nyc-secondary-button:hover,
+.nyc-arrival-card:hover,
+.nyc-trip-card:hover,
+.nyc-panel-tab:hover {
+  transform: translateY(-1px);
+}
+
+.nyc-panel-tab.is-active {
+  background: rgba(77, 209, 135, 0.18);
+  border-color: rgba(77, 209, 135, 0.42);
+}
+
+.nyc-panel-body,
+.nyc-section,
+.nyc-arrivals-list,
+.nyc-trip-list,
+.nyc-trip-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nyc-panel-body {
+  margin-top: 18px;
+}
+
+.nyc-summary-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nyc-summary-card,
+.nyc-arrival-card,
+.nyc-trip-card,
+.nyc-empty-state {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.76);
+}
+
+.nyc-summary-card {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nyc-summary-card strong,
+.nyc-route-pill,
+.nyc-eta-pill,
+.nyc-warning-pill {
+  font-weight: 700;
+}
+
+.nyc-arrival-card,
+.nyc-trip-card {
+  width: 100%;
+  text-align: left;
+  padding: 16px;
+  cursor: pointer;
+}
+
+.nyc-arrival-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.nyc-route-pill,
+.nyc-eta-pill,
+.nyc-warning-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.nyc-route-pill {
+  background: rgba(37, 99, 235, 0.18);
+  color: #93c5fd;
+}
+
+.nyc-eta-pill {
+  background: rgba(77, 209, 135, 0.16);
+  color: #84f4b2;
+  min-width: 72px;
+}
+
+.nyc-warning-pill {
+  background: rgba(248, 113, 113, 0.18);
+  color: #fca5a5;
+}
+
+.nyc-trip-copy {
+  margin-top: 10px;
+}
+
+.nyc-trip-steps {
+  margin-top: 12px;
+}
+
+.nyc-trip-step {
+  border-left: 2px solid rgba(77, 209, 135, 0.45);
+  padding-left: 12px;
+}
+
+.nyc-trip-step--walking {
+  border-color: rgba(148, 163, 184, 0.42);
+}
+
+.nyc-trip-card.is-active {
+  border-color: rgba(77, 209, 135, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(77, 209, 135, 0.2);
+}
+
+.nyc-empty-state {
+  padding: 18px;
+}
+
+.nyc-config-card {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: min(320px, calc(100vw - 40px));
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(248, 113, 113, 0.34);
+  background: rgba(127, 29, 29, 0.82);
+}
+
+.nyc-bus-marker {
+  min-width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 3px solid #2563eb;
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.3);
+}
+
+.nyc-bus-marker:hover {
+  transform: scale(1.04);
+}
+
+.mapboxgl-ctrl-top-right {
+  top: 18px;
+  right: 18px;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 14px;
+}
+
+@media (min-width: 1120px) {
+  .nyc-panel {
+    left: auto;
+    width: 420px;
+  }
+}
+
+@media (max-width: 720px) {
+  .nyc-topbar {
+    margin: 12px 12px 0;
+    max-width: calc(100vw - 24px);
+  }
+
+  .nyc-panel {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    max-width: none;
+    padding: 16px;
+  }
+
+  .nyc-topbar-actions,
+  .nyc-section-header,
+  .nyc-arrival-card,
+  .nyc-trip-topline,
+  .nyc-trip-meta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nyc-summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .nyc-primary-button,
+  .nyc-secondary-button {
+    width: 100%;
+    text-align: center;
+  }
+}
