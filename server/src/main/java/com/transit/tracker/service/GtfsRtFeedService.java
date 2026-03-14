@@ -1,7 +1,7 @@
 package com.transit.tracker.service;
 
 import com.google.transit.realtime.GtfsRealtime;
-import com.transit.tracker.handler.SocketIOEventHandler;
+import com.transit.tracker.controller.TransitWebSocketController;
 import com.transit.tracker.model.Vehicle;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -31,7 +31,7 @@ public class GtfsRtFeedService {
     private static final Logger log = LoggerFactory.getLogger(GtfsRtFeedService.class);
 
     private final TransitService transitService;
-    private final SocketIOEventHandler eventHandler;
+    private final TransitWebSocketController eventHandler;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private volatile Set<String> trackedVehicleIds = Set.of();
@@ -42,7 +42,7 @@ public class GtfsRtFeedService {
     @Value("${transit.mta.api-key:}")
     private String apiKey;
 
-    public GtfsRtFeedService(TransitService transitService, SocketIOEventHandler eventHandler) {
+    public GtfsRtFeedService(TransitService transitService, TransitWebSocketController eventHandler) {
         this.transitService = transitService;
         this.eventHandler = eventHandler;
     }

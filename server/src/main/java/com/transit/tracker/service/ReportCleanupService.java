@@ -1,6 +1,6 @@
 package com.transit.tracker.service;
 
-import com.transit.tracker.handler.SocketIOEventHandler;
+import com.transit.tracker.controller.TransitWebSocketController;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
@@ -19,13 +19,13 @@ public class ReportCleanupService {
     private static final Logger log = LoggerFactory.getLogger(ReportCleanupService.class);
 
     private final TransitService transitService;
-    private final SocketIOEventHandler eventHandler;
+    private final TransitWebSocketController eventHandler;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     @Value("${reports.max-age-minutes:30}")
     private int maxAgeMinutes;
 
-    public ReportCleanupService(TransitService transitService, SocketIOEventHandler eventHandler) {
+    public ReportCleanupService(TransitService transitService, TransitWebSocketController eventHandler) {
         this.transitService = transitService;
         this.eventHandler = eventHandler;
     }

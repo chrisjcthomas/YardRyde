@@ -1,6 +1,6 @@
 package com.transit.tracker.service;
 
-import com.transit.tracker.handler.SocketIOEventHandler;
+import com.transit.tracker.controller.TransitWebSocketController;
 import com.transit.tracker.model.Vehicle;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -24,7 +24,7 @@ public class BusSimulatorService {
     private static final Logger log = LoggerFactory.getLogger(BusSimulatorService.class);
 
     private final TransitService transitService;
-    private final SocketIOEventHandler eventHandler;
+    private final TransitWebSocketController eventHandler;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final ConcurrentHashMap<String, SimBusState> simState = new ConcurrentHashMap<>();
 
@@ -78,7 +78,7 @@ public class BusSimulatorService {
         }
     }
 
-    public BusSimulatorService(TransitService transitService, SocketIOEventHandler eventHandler) {
+    public BusSimulatorService(TransitService transitService, TransitWebSocketController eventHandler) {
         this.transitService = transitService;
         this.eventHandler = eventHandler;
     }

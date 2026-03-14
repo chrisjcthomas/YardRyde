@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: transit-tracker
+    runtime: nixpacks
+    # Render will automatically use nixpacks.toml for build and start commands.
+    # We define environment variables here.
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: TRANSIT_DATA_SOURCE
+        value: simulator
+      - key: JAVA_VERSION
+        value: 21
+      - key: NODE_VERSION
+        value: 22
