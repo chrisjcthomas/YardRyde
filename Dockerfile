@@ -1,5 +1,7 @@
 # Stage 1: Build the React frontend
 FROM node:22-slim AS frontend-builder
+ARG VITE_DATA_SOURCE=nyc
+ENV VITE_DATA_SOURCE=$VITE_DATA_SOURCE
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
