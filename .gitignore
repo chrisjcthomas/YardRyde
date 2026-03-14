@@ -29,6 +29,15 @@ target/
 *.jar
 *.war
 *.ear
+server/src/main/resources/static/
+
+# App-specific data/logs
+server/*.json
+server/*.log
+server/*.txt
+server/*.ps1
+!server/pom.xml
+!server/.env.example
 
 # Environment variables
 .env

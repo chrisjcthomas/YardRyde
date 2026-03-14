@@ -1,0 +1,17 @@
+[build]
+installNamespaces = ["node", "java"]
+
+[phases.setup]
+nixPkgs = ["nodejs-22_x", "jdk21"]
+
+[phases.build]
+cmds = [
+    "cd client && npm install && npm run build",
+    "mkdir -p server/src/main/resources/static",
+    "rm -rf server/src/main/resources/static/*",
+    "cp -r client/dist/* server/src/main/resources/static/",
+    "cd server && chmod +x mvnw && ./mvnw clean package -DskipTests"
+]
+
+[start]
+cmd = "java -jar server/target/tracker-1.0.0.jar"

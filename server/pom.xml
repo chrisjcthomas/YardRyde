@@ -45,15 +45,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.transit</groupId>
+            <groupId>org.mobilitydata</groupId>
             <artifactId>gtfs-realtime-bindings</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.8</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>4.29.3</version>
+            <version>3.25.5</version>
         </dependency>
 
         <dependency>

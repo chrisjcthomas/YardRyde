@@ -581,26 +581,26 @@ body[data-theme='dark'] .ghost-action--chrome {
 .nyc-map {
   position: absolute;
   inset: 0;
+  z-index: 0;
 }
 
 .nyc-topbar,
 .nyc-panel,
 .nyc-config-card {
   position: relative;
-  z-index: 2;
+  z-index: 1000;
 }
 
 .nyc-topbar {
-  margin: 20px 20px 0;
-  padding: 18px;
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(7, 12, 22, 0.82);
-  backdrop-filter: blur(18px);
+  margin: 0;
+  padding: 24px;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: min(720px, calc(100vw - 40px));
+  gap: 20px;
+  width: 100%;
 }
 
 .nyc-brand {
@@ -728,19 +728,29 @@ body[data-theme='dark'] .ghost-action--chrome {
   color: #f8fafc;
 }
 
-.nyc-panel {
+.nyc-controls {
   position: absolute;
+  top: 20px;
   left: 20px;
-  right: 20px;
   bottom: 20px;
-  z-index: 2;
-  max-width: 460px;
+  width: 400px;
+  max-width: 90vw;
+  z-index: 1000;
+  background: rgba(7, 12, 22, 0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(7, 12, 22, 0.84);
-  backdrop-filter: blur(22px);
-  padding: 18px;
-  max-height: min(58vh, 720px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+}
+
+.nyc-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px 24px;
   overflow: auto;
 }
 
@@ -893,16 +903,21 @@ body[data-theme='dark'] .ghost-action--chrome {
 }
 
 .nyc-bus-marker {
-  min-width: 44px;
-  height: 44px;
+  min-width: 32px;
+  height: 32px;
   border-radius: 999px;
-  border: 3px solid #2563eb;
+  border: 2px solid #2563eb;
   background: rgba(255, 255, 255, 0.96);
   color: #0f172a;
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(2, 6, 23, 0.3);
+}
+
+.nyc-bus-marker-wrapper {
+  background: none !important;
+  border: none !important;
 }
 
 .nyc-bus-marker:hover {
@@ -918,10 +933,10 @@ body[data-theme='dark'] .ghost-action--chrome {
   border-radius: 14px;
 }
 
-@media (min-width: 1120px) {
-  .nyc-panel {
-    left: auto;
-    width: 420px;
+@media (min-width: 1440px) {
+  .nyc-controls {
+    width: 25%;
+    max-width: 480px;
   }
 }
 

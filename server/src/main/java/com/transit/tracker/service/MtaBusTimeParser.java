@@ -11,7 +11,11 @@ import java.util.List;
 final class MtaBusTimeParser {
 
     List<MtaStop> parseStops(JsonNode root) {
-        JsonNode list = root.path("data").path("list");
+        JsonNode list = root.path("data").path("stops");
+        if (!list.isArray()) {
+            // Fallback to "list" for backward compatibility
+            list = root.path("data").path("list");
+        }
         if (!list.isArray()) {
             return List.of();
         }
@@ -32,12 +36,28 @@ final class MtaBusTimeParser {
             }
 
             List<String> routes = new ArrayList<>();
-            JsonNode routeIds = node.path("routeIds");
-            if (routeIds.isArray()) {
-                for (JsonNode routeNode : routeIds) {
-                    String routeId = normalizeRouteId(text(routeNode));
+            // Try "routes" array of objects (each with "shortName")
+            JsonNode routesArray = node.path("routes");
+            if (routesArray.isArray()) {
+                for (JsonNode routeNode : routesArray) {
+                    String routeId = normalizeRouteId(text(routeNode.path("shortName")));
+                    if (routeId == null) {
+                        routeId = normalizeRouteId(text(routeNode.path("id")));
+                    }
                     if (routeId != null && !routes.contains(routeId)) {
                         routes.add(routeId);
+                    }
+                }
+            }
+            // Fallback to "routeIds" string array
+            if (routes.isEmpty()) {
+                JsonNode routeIds = node.path("routeIds");
+                if (routeIds.isArray()) {
+                    for (JsonNode routeNode : routeIds) {
+                        String routeId = normalizeRouteId(text(routeNode));
+                        if (routeId != null && !routes.contains(routeId)) {
+                            routes.add(routeId);
+                        }
                     }
                 }
             }
@@ -48,6 +68,7 @@ final class MtaBusTimeParser {
 
         return stops;
     }
+
 
     List<MtaArrival> parseArrivals(JsonNode root) {
         JsonNode deliveries = root.path("Siri").path("ServiceDelivery").path("StopMonitoringDelivery");

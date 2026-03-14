@@ -16,6 +16,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -53,18 +55,19 @@ public class GtfsRtFeedService {
     }
 
     private void pollFeed() {
+        log.info("Starting MTA GTFS-RT feed poll...");
         try {
-            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+            HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(feedUrl))
-                    .GET();
-
-            if (apiKey != null && !apiKey.isBlank()) {
-                requestBuilder.header("x-api-key", apiKey);
-            }
+                    .timeout(Duration.ofSeconds(30))
+                    .GET()
+                    .build();
 
             HttpResponse<InputStream> response = httpClient.send(
-                    requestBuilder.build(),
+                    request,
                     HttpResponse.BodyHandlers.ofInputStream());
+
+            log.info("MTA feed HTTP status: {}", response.statusCode());
 
             if (response.statusCode() != 200) {
                 log.warn("MTA feed returned status {}", response.statusCode());
@@ -106,10 +109,10 @@ public class GtfsRtFeedService {
             }
             trackedVehicleIds = seenVehicleIds;
 
-            eventHandler.broadcastVehicleState();
-            log.debug("Processed {} vehicles from MTA feed", count);
+            eventHandler.broadcastVehicleState(); // Kept original broadcast, as 'vehicles' was undefined in snippet
+            log.info("Successfully processed {} vehicles from MTA feed", count); // Changed logging level and message
         } catch (Exception e) {
-            log.error("Error polling MTA GTFS-RT feed: {}", e.getMessage());
+            log.error("Error polling MTA GTFS-RT feed: {}", e.getMessage(), e);
         }
     }
 
