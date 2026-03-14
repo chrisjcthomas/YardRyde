@@ -7,9 +7,9 @@ COPY client/ ./
 RUN npm run build
 
 # Stage 2: Build the Spring Boot backend
-FROM openjdk:21-slim AS backend-builder
+FROM eclipse-temurin:21-jdk-jammy AS backend-builder
 WORKDIR /app
-# Install findutils for mvnw and other tools
+# Install findutils for mvnw and other tools (apt-get is available in jammy)
 RUN apt-get update && apt-get install -y findutils
 COPY server/ .
 # Copy frontend build to static resources
@@ -19,7 +19,7 @@ RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 
 # Stage 3: Final runtime image
-FROM openjdk:21-slim
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 COPY --from=backend-builder /app/target/tracker-1.0.0.jar app.jar
 EXPOSE 8080
