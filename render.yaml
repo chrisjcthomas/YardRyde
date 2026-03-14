@@ -2,6 +2,7 @@ services:
   - type: web
     name: transit-tracker
     runtime: docker
+    plan: free
     envVars:
       - key: PORT
         value: 8080
