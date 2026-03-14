@@ -1,15 +1,9 @@
 services:
   - type: web
     name: transit-tracker
-    runtime: nixpacks
-    buildCommand: npm install && npm run build
-    startCommand: java -jar server/target/tracker-1.0.0.jar
+    runtime: docker
     envVars:
       - key: PORT
         value: 8080
       - key: TRANSIT_DATA_SOURCE
         value: simulator
-      - key: JAVA_VERSION
-        value: 21
-      - key: NODE_VERSION
-        value: 22
