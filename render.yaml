@@ -8,7 +8,9 @@ services:
         value: 8080
       - key: TRANSIT_DATA_SOURCE
         value: mta
+      - key: VITE_DATA_SOURCE
+        value: nyc
       - key: MTA_BUSTIME_API_KEY
         sync: false
-      - key: VITE_GOOGLE_MAPS_BROWSER_KEY
+      - key: GOOGLE_MAPS_API_KEY
         sync: false

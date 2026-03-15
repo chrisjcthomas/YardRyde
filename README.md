@@ -1,34 +1,31 @@
-# YardRyde: Jamaica's Real-Time Transit Tracker
+# Real-Time Multi-Region Transit Tracker
 
-**YardRyde** is a high-performance, real-time transit tracking platform built to solve the unpredictability of commuting in Jamaica. Focused initially on **Kingston and St. Andrew**, YardRyde enables riders to visualize JUTC bus positions, track live ETAs, and contribute to crowdsourced "vibe" reports.
+A high-performance, real-time transit tracking platform supporting both a **Kingston, Jamaica** simulator and live **New York City (MTA)** bus data. Riders can visualize bus positions, track ETAs, plan trips, and receive proximity notifications across multiple regions.
 
-![YardRyde Status](https://img.shields.io/badge/YardRyde-Live-brightgreen)
+![Transit Tracker](https://img.shields.io/badge/Transit-Tracker-brightgreen)
 ![React](https://img.shields.io/badge/React-19+-61DAFB?logo=react)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4-6DB33F?logo=springboot)
 ![Socket.io](https://img.shields.io/badge/Socket.io-4.x-black?logo=socket.io)
 ![Leaflet](https://img.shields.io/badge/Leaflet-1.9+-199900?logo=leaflet)
 
-## 🇯🇲 The Mission: Kingston & St. Andrew
-In Kingston, commuters often face long, unpredictable waits at bus stops. YardRyde provides:
-- **Live Tracking:** See exactly where your bus is on the map.
-- **Smart Planning:** Input your destination to find the best JUTC routes and estimated arrival times.
-- **Driver Empowerment:** A dedicated interface for drivers to broadcast their live GPS location with a single tap.
-- **Vibe Reports:** Crowdsourced real-time updates on delays, crowding, and AC status ("Cold AC ❄️").
+## 🌍 Multi-Region Support
 
-## 🌍 Multi-Region Capability
-While our heart is in Jamaica, YardRyde is built on a robust, multi-region architecture. The app dynamically switches based on the `DATA_SOURCE` configuration:
+The application dynamically switches its interface and data orchestration based on the `DATA_SOURCE` configuration:
 
-- **Kingston Mode (`kingston`):** Our primary focus. A high-fidelity simulator and driver-broadcasting system tailored for JUTC routes.
-- **NYC Mode (`nyc`):** A technical proof-of-concept using live **New York City (MTA)** bus data (SIRI/GTFS-RT) to demonstrate real-world API integration at scale.
+- **Kingston Mode (`kingston`):** A high-fidelity simulator for Kingston, Jamaica with color-coded routes (JUTC inspired), crowdsourced "vibe" reports, and interactive trip planning.
+- **NYC Mode (`nyc`):** Live tracking for the New York City MTA bus network using official SIRI (Stop Monitoring) and GTFS-RT (Vehicle Positions) APIs.
 
-## Core Features
+## Features
 
-- **Real-Time Map Visualization** — Interactive Leaflet maps with sub-2s position updates.
-- **Trip Planner** — Advanced routing logic to tell you which bus to take to reach your destination.
-- **Proximity Notifications** — Browser alerts when your watched bus is within 500m.
-- **Driver Dashboard** — Simple, mobile-first toggle for drivers to share their live location.
-- **GTFS-RT Compatibility** — Backend generates Protocol Buffer streams for professional transit integration.
-- **Cross-Platform** — Responsive web client for riders and a React Native companion app for deep mobile integration.
+- **Real-Time Tracking** -- Live bus positions on an interactive map (Leaflet) with 2s updates in simulator mode and live MTA polling in NYC mode.
+- **Region-Specific UIs** -- Dedicated views: `RiderMap` for Kingston's route-based tracking and `NycTransitPage` for NYC's stop-centric live monitoring.
+- **Advanced Trip Planning** -- Find connecting routes and live ETAs between stops using regional routing logic.
+- **NYC Stop Monitoring** -- Real-time arrivals, distance-to-stop, and "layover" status for every MTA bus stop.
+- **Google Maps Integration** -- Integrated address autocompletion and geocoding for precise stop discovery in NYC.
+- **Crowdsourced Vibe Reports (Kingston)** -- Submit reports for delays, crowding, and AC status; reports auto-expire after 30 minutes.
+- **Proximity Notifications** -- Browser-based alerts when a watched bus is within 500m of your location.
+- **GTFS-RT Output** -- Backend provides a Protocol Buffer endpoint at `/api/gtfs-rt/vehicle-positions`.
+- **Cross-Platform** -- Responsive React web client and a React Native mobile companion app.
 
 ## Tech Stack
 
@@ -38,16 +35,32 @@ While our heart is in Jamaica, YardRyde is built on a robust, multi-region archi
 | **Server** | Java 21, Spring Boot 3.4.3, netty-socketio, Maven, GTFS-RT / Protocol Buffers |
 | **Mobile** | React Native 0.78, TypeScript, react-native-maps, @notifee/react-native |
 | **Data Sources** | Kingston Simulator (In-memory), NYC MTA (SIRI / GTFS-RT APIs) |
+| **Storage** | Concurrent In-memory store, optional PostgreSQL via Spring Data JPA |
 
 ## Project Structure
 
 ```
 Real-Time_Transit_Tracker/
-├── client/           # React Web Application (Rider & Driver views)
-├── server/           # Spring Boot Backend (Orchestration & Simulator)
-├── mobile/           # React Native App (iOS/Android)
-├── Documentation/    # PRD, Roadmaps, and Hackathon Specs
-└── README.md
+├── server/
+│   └── src/main/java/com/transit/tracker/
+│       ├── controller/
+│       │   ├── NycTransitController.java         # NYC REST API (/api/nyc/*)
+│       │   └── GtfsRtController.java             # GTFS-RT Protobuf output
+│       └── service/
+│           ├── NycTransitService.java            # MTA API orchestration
+│           ├── MtaBusTimeHttpGateway.java        # High-perf SIRI client
+│           ├── MtaBusTimeParser.java             # SIRI/GTFS-RT robust parsing
+│           └── BusSimulatorService.java          # Kingston bus simulator
+├── client/
+│   └── src/
+│       ├── pages/
+│       │   ├── NycTransitPage.jsx                # Dedicated NYC Live view
+│       │   └── RiderMap.jsx                      # Kingston Simulator view
+│       └── services/
+│           ├── nycApi.js                         # NYC-specific API client
+│           └── googleMaps.js                     # Google Maps integration
+├── mobile/                                       # React Native application
+└── Documentation/                                # PRD, Roadmaps, and UI specs
 ```
 
 ## Quick Start
@@ -56,14 +69,14 @@ Real-Time_Transit_Tracker/
 
 **Client (`client/.env`):**
 ```bash
-VITE_DATA_SOURCE=kingston # Set to 'nyc' for MTA demo
+VITE_DATA_SOURCE=nyc # or 'kingston'
 VITE_SOCKET_URL=http://localhost:3001
 VITE_GOOGLE_MAPS_BROWSER_KEY=your_key_here
 ```
 
 **Server (`server/.env`):**
 ```bash
-TRANSIT_DATA_SOURCE=simulator # Set to 'mta' for NYC data
+TRANSIT_DATA_SOURCE=mta # or 'simulator'
 TRANSIT_MTA_API_KEY=your_mta_gtfs_key
 MTA_BUSTIME_API_KEY=your_mta_bustime_key
 ```
@@ -80,7 +93,15 @@ cd server && ./mvnw spring-boot:run
 cd client && npm install && npm run dev
 ```
 
-## Supported Routes (Kingston)
+## API Endpoints (NYC)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/nyc/nearby` | Finds stops and arrivals near lat/lng |
+| GET | `/api/nyc/stop` | Real-time arrivals for a specific Stop ID |
+| GET | `/api/nyc/vehicles` | Live vehicle positions for a specific Route ID |
+
+## Supported Routes (Kingston Simulator)
 
 | Route | Name | Color |
 |-------|------|-------|
@@ -88,5 +109,6 @@ cd client && npm install && npm run dev
 | 76 | Cross Roads to Downtown | Blue |
 | 42 | UTech to Constant Spring | Orange |
 
----
-**YardRyde** — Launched today for the Intellibus Hackathon 2026. Bringing transparency to Jamaican transit, one stop at a time.
+## License
+
+ISC License — Built for the Intellibus Hackathon 2026.
