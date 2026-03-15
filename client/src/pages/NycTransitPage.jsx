@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import PlaceAutocompleteInput from '../components/PlaceAutocompleteInput';
 import Toast from '../components/Toast';
 import {
+  ACTIVE_SOURCE,
   DARK_TILE_URL,
   GOOGLE_MAPS_BROWSER_KEY,
   NYC_FALLBACK_ORIGIN,
@@ -16,10 +17,6 @@ import { fetchNearbyTransit } from '../services/nycApi';
 const NEARBY_POLL_INTERVAL_MS = 20000;
 const ORIGIN_MOVE_REFRESH_KM = 0.25;
 const DEFAULT_QUERY_SPAN = 0.02;
-const NYC_LAB_CONFIG = {
-  displayName: 'NYC Bus Lab',
-  modeLabel: 'Internal live-data validation',
-};
 
 function distanceKm(lat1, lng1, lat2, lng2) {
   const earthRadiusKm = 6371;
@@ -460,12 +457,17 @@ function NycTransitPage() {
   const nearbyList = nearbyData?.arrivals || [];
   const hasGoogleKey = Boolean(GOOGLE_MAPS_BROWSER_KEY);
 
-  useEffect(() => {
-    document.title = NYC_LAB_CONFIG.displayName;
-  }, []);
-
   return (
     <div className="nyc-shell">
+      {!hasGoogleKey ? (
+        <div className="nyc-config-card">
+          <h1>{ACTIVE_SOURCE.displayName}</h1>
+          <p>
+            Missing configuration: VITE_GOOGLE_MAPS_BROWSER_KEY
+          </p>
+        </div>
+      ) : null}
+
       <div className="nyc-map">
         <MapContainer
           center={[origin.lat, origin.lng]}
@@ -530,8 +532,8 @@ function NycTransitPage() {
       <div className="nyc-controls">
         <header className="nyc-topbar">
           <div className="nyc-brand">
-            <span className="nyc-mode-tag">{NYC_LAB_CONFIG.modeLabel}</span>
-            <h1>{NYC_LAB_CONFIG.displayName}</h1>
+            <span className="nyc-mode-tag">{ACTIVE_SOURCE.modeLabel}</span>
+            <h1>{ACTIVE_SOURCE.displayName}</h1>
             <p>{gpsStatus === 'granted' ? origin.label : `Using ${origin.label}`}</p>
           </div>
 
@@ -576,12 +578,6 @@ function NycTransitPage() {
             <span>{formatRelativeTimestamp(nearbyData?.updatedAt)}</span>
             <span>{nearbyData?.closestStop ? `Closest stop: ${nearbyData.closestStop.name}` : 'No stop found yet'}</span>
           </div>
-
-          {!hasGoogleKey ? (
-            <div className="nyc-empty-state">
-              <p>Trip autocomplete is disabled on this lab page until VITE_GOOGLE_MAPS_BROWSER_KEY is set.</p>
-            </div>
-          ) : null}
         </header>
 
         <section className="nyc-panel">
@@ -593,15 +589,13 @@ function NycTransitPage() {
             >
               Nearby
             </button>
-            {hasGoogleKey ? (
-              <button
-                type="button"
-                className={`nyc-panel-tab ${selectedTab === 'trip' ? 'is-active' : ''}`}
-                onClick={() => setSelectedTab('trip')}
-              >
-                Trip
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className={`nyc-panel-tab ${selectedTab === 'trip' ? 'is-active' : ''}`}
+              onClick={() => setSelectedTab('trip')}
+            >
+              Trip
+            </button>
           </div>
 
           {selectedTab === 'nearby' && (
@@ -694,7 +688,7 @@ function NycTransitPage() {
             </div>
           )}
 
-          {hasGoogleKey && selectedTab === 'trip' && (
+          {selectedTab === 'trip' && (
             <div className="nyc-panel-body">
               <div className="nyc-section-header">
                 <div>

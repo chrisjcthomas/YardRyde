@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
+import { CircleMarker, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import Toast from '../components/Toast';
+import { RouteTrails } from '../components/RouteTrail';
+import { checkProximityAndNotify, getPermissionState, requestPermission } from '../services/notifications';
 import { Icon, divIcon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import socket from '../services/socket';
@@ -13,8 +16,7 @@ import {
   ROUTE_COLORS,
   TILE_URL,
 } from '../constants';
-import Toast from '../components/Toast';
-import { checkProximityAndNotify, getPermissionState, requestPermission } from '../services/notifications';
+
 
 const REPORT_TYPE_LIST = Object.values(REPORT_TYPES);
 
@@ -794,27 +796,11 @@ function RiderMap() {
           <CircleMarker center={userLocation} radius={8} fillColor="#2563eb" fillOpacity={0.85} stroke={false} />
           <CircleMarker center={userLocation} radius={18} fillColor="#2563eb" fillOpacity={0.22} stroke={false} />
 
-          {ROUTES.map((route) => {
-            const isActive = !selectedRoute || selectedRoute === route.number;
-
-            return (
-              <Polyline
-                key={route.id}
-                positions={route.coordinates}
-                color={ROUTE_COLORS[route.number] || '#6b7280'}
-                weight={isActive ? 5 : 2}
-                opacity={isActive ? 0.85 : 0.16}
-                eventHandlers={{ click: () => focusRoute(route.number) }}
-              >
-                <Popup>
-                  <div className="map-popup">
-                    <strong>Route {route.number}</strong>
-                    <p>{formatRouteName(route.name)}</p>
-                  </div>
-                </Popup>
-              </Polyline>
-            );
-          })}
+          <RouteTrails
+          selectedRoute={selectedRoute}
+          onRouteClick={focusRoute}
+          formatRouteName={formatRouteName}
+          />
 
           {(selectedRouteData?.stops ?? []).map((stop) => (
             <CircleMarker
