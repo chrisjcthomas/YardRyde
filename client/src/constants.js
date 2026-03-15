@@ -1,9 +1,8 @@
-export const DATA_SOURCE = import.meta.env.VITE_DATA_SOURCE || 'kingston';
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 export const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
 export const GOOGLE_MAPS_BROWSER_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY || '';
 
-export const KINGSTON_CENTER = [18.0179, -76.8099];
+export const KINGSTON_CENTER = [18.0129, -76.7941];
 export const NYC_CENTER = [40.758, -73.9855];
 export const NYC_FALLBACK_ORIGIN = {
   lat: 40.758,
@@ -12,34 +11,8 @@ export const NYC_FALLBACK_ORIGIN = {
   source: 'fallback',
 };
 
-export const SOURCE_CONFIG = {
-  kingston: {
-    id: 'kingston',
-    displayName: 'Kingston Transit Tracker',
-    modeLabel: 'Simulator demo',
-    mapCenter: KINGSTON_CENTER,
-    defaultZoom: 13,
-    supportsStaticRoutes: true,
-    supportsTripPlanner: true,
-    supportsCrowdReports: true,
-    isDemoMode: true,
-  },
-  nyc: {
-    id: 'nyc',
-    displayName: 'NYC Bus Live',
-    modeLabel: 'Real-time MTA data',
-    mapCenter: NYC_CENTER,
-    defaultZoom: 13,
-    supportsStaticRoutes: false,
-    supportsTripPlanner: true,
-    supportsCrowdReports: false,
-    isDemoMode: false,
-  },
-};
-
-export const ACTIVE_SOURCE = SOURCE_CONFIG[DATA_SOURCE] || SOURCE_CONFIG.kingston;
-export const MAP_CENTER = ACTIVE_SOURCE.mapCenter;
-export const DEFAULT_ZOOM = ACTIVE_SOURCE.defaultZoom;
+export const MAP_CENTER = KINGSTON_CENTER;
+export const DEFAULT_ZOOM = 13;
 
 export const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 export const DARK_TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
@@ -56,63 +29,67 @@ export const ROUTES = [
   {
     id: 'route-800',
     number: '800',
-    name: 'Half-Way-Tree to Portmore',
+    name: 'Portmore to Half Way Tree',
     coordinates: [
-      [18.0185, -76.7975],
-      [18.02, -76.8],
-      [18.015, -76.82],
-      [18.01, -76.84],
-      [18.005, -76.86],
+      [17.9718, -76.8722],
+      [17.9838, -76.8396],
+      [17.997, -76.7937],
+      [18.0066, -76.7836],
+      [18.0129, -76.7941],
     ],
     stops: [
-      { name: 'Half Way Tree', lat: 18.0185, lng: -76.7975 },
-      { name: 'Portmore', lat: 18.005, lng: -76.86 },
+      { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 0 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 2 },
+      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 3 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 4 },
     ],
   },
   {
     id: 'route-76',
     number: '76',
-    name: 'Cross Roads to Downtown',
+    name: 'Half Way Tree to Downtown',
     coordinates: [
-      [18.015, -76.785],
-      [18.01, -76.79],
-      [18.005, -76.795],
-      [18, -76.8],
+      [18.0129, -76.7941],
+      [18.0066, -76.7836],
+      [17.997, -76.7937],
     ],
     stops: [
-      { name: 'Cross Roads', lat: 18.015, lng: -76.785 },
-      { name: 'Downtown', lat: 18, lng: -76.8 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
+      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 1 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 2 },
     ],
   },
   {
     id: 'route-42',
     number: '42',
-    name: 'UTech to Constant Spring',
+    name: 'Half Way Tree to Papine',
     coordinates: [
-      [18.005, -76.745],
-      [18.01, -76.75],
-      [18.02, -76.76],
-      [18.03, -76.77],
+      [18.0129, -76.7941],
+      [18.005, -76.7498],
+      [18.012, -76.7442],
     ],
     stops: [
-      { name: 'UTech', lat: 18.005, lng: -76.745 },
-      { name: 'Constant Spring', lat: 18.03, lng: -76.77 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
+      { name: 'UTech', lat: 18.005, lng: -76.7498, coordinateIndex: 1 },
+      { name: 'Papine', lat: 18.012, lng: -76.7442, coordinateIndex: 2 },
     ],
   },
   {
     id: 'route-900',
     number: '900',
-    name: 'Portmore to Half-Way-Tree',
+    name: 'Half Way Tree to Portmore',
     coordinates: [
-      [18.005, -76.86],
-      [18.01, -76.84],
-      [18.015, -76.82],
-      [18.02, -76.8],
-      [18.0185, -76.7975],
+      [18.0129, -76.7941],
+      [18.0066, -76.7836],
+      [17.997, -76.7937],
+      [17.9838, -76.8396],
+      [17.9718, -76.8722],
     ],
     stops: [
-      { name: 'Portmore', lat: 18.005, lng: -76.86 },
-      { name: 'Half Way Tree', lat: 18.0185, lng: -76.7975 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
+      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 1 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 2 },
+      { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 4 },
     ],
   },
   {
@@ -120,16 +97,68 @@ export const ROUTES = [
     number: '83',
     name: 'Stony Hill to Downtown',
     coordinates: [
-      [18.05, -76.78],
-      [18.04, -76.785],
-      [18.03, -76.79],
-      [18.02, -76.795],
-      [18, -76.8],
+      [18.0613, -76.785],
+      [18.0407, -76.7918],
+      [18.0129, -76.7941],
+      [17.997, -76.7937],
     ],
     stops: [
-      { name: 'Stony Hill', lat: 18.05, lng: -76.78 },
-      { name: 'Downtown', lat: 18, lng: -76.8 },
+      { name: 'Stony Hill', lat: 18.0613, lng: -76.785, coordinateIndex: 0 },
+      { name: 'Constant Spring', lat: 18.0407, lng: -76.7918, coordinateIndex: 1 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 2 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 3 },
     ],
+  },
+];
+
+export const JAMAICA_PLACES = [
+  {
+    id: 'half-way-tree',
+    label: 'Half Way Tree Transport Centre',
+    description: 'Main transfer hub in St. Andrew',
+    stopNames: ['Half Way Tree'],
+  },
+  {
+    id: 'downtown',
+    label: 'Downtown Kingston',
+    description: 'Parade and the major work district',
+    stopNames: ['Downtown'],
+  },
+  {
+    id: 'cross-roads',
+    label: 'Cross Roads',
+    description: 'Central junction for quick transfers',
+    stopNames: ['Cross Roads'],
+  },
+  {
+    id: 'portmore',
+    label: 'Portmore',
+    description: 'Commuter corridor into Kingston',
+    stopNames: ['Portmore'],
+  },
+  {
+    id: 'utech',
+    label: 'UTech',
+    description: 'University area along the Papine corridor',
+    stopNames: ['UTech'],
+  },
+  {
+    id: 'papine',
+    label: 'Papine',
+    description: 'Campus and town-centre destination',
+    stopNames: ['Papine'],
+  },
+  {
+    id: 'constant-spring',
+    label: 'Constant Spring',
+    description: 'Busy northbound corridor',
+    stopNames: ['Constant Spring'],
+  },
+  {
+    id: 'stony-hill',
+    label: 'Stony Hill',
+    description: 'Upper St. Andrew route terminus',
+    stopNames: ['Stony Hill'],
   },
 ];
 

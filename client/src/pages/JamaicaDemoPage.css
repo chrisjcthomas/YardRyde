@@ -1,0 +1,398 @@
+.yard-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(21, 128, 61, 0.16), transparent 28%),
+    linear-gradient(160deg, #f4efe4 0%, #ece7db 38%, #e7ebea 100%);
+  color: #142218;
+}
+
+.yard-shell.is-dark {
+  background:
+    radial-gradient(circle at top left, rgba(74, 222, 128, 0.18), transparent 22%),
+    linear-gradient(160deg, #07110d 0%, #0d1713 42%, #10201a 100%);
+  color: #edf7f1;
+}
+
+.yard-panel,
+.yard-map-panel {
+  min-height: 0;
+}
+
+.yard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.yard-card,
+.yard-map-panel {
+  border-radius: 28px;
+  border: 1px solid rgba(20, 34, 24, 0.12);
+  background: rgba(255, 251, 244, 0.9);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 22px 48px rgba(20, 34, 24, 0.1);
+}
+
+.yard-shell.is-dark .yard-card,
+.yard-shell.is-dark .yard-map-panel {
+  border-color: rgba(238, 246, 241, 0.1);
+  background: rgba(9, 19, 15, 0.88);
+  box-shadow: 0 28px 56px rgba(0, 0, 0, 0.28);
+}
+
+.yard-card {
+  padding: 18px;
+}
+
+.yard-card--hero {
+  background:
+    linear-gradient(135deg, rgba(12, 115, 63, 0.98), rgba(21, 157, 83, 0.94)),
+    rgba(12, 115, 63, 0.96);
+  color: #f7fff9;
+}
+
+.yard-shell.is-dark .yard-card--hero {
+  background:
+    linear-gradient(135deg, rgba(8, 52, 31, 0.98), rgba(14, 100, 55, 0.96)),
+    rgba(8, 52, 31, 0.96);
+}
+
+.yard-card--hero .yard-helper-copy,
+.yard-card--hero .yard-hero-copy {
+  color: rgba(247, 255, 249, 0.84);
+}
+
+.yard-hero-topline,
+.yard-section-heading,
+.yard-arrival-title,
+.yard-hero-actions,
+.yard-map-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.yard-hero-topline {
+  align-items: flex-start;
+}
+
+.yard-badge,
+.yard-map-badge,
+.yard-score-pill,
+.yard-distance-pill,
+.yard-eta-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.yard-badge {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #f7fff9;
+}
+
+.yard-lab-link {
+  color: rgba(247, 255, 249, 0.88);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.yard-lab-link:hover {
+  color: #ffffff;
+}
+
+.yard-card--hero h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  line-height: 0.98;
+  margin-top: 10px;
+}
+
+.yard-hero-copy,
+.yard-supporting-copy,
+.yard-helper-copy,
+.yard-arrival-card p,
+.yard-leg-card p,
+.yard-plan-summary,
+.yard-section-heading p,
+.yard-empty-state {
+  line-height: 1.45;
+  color: #59665f;
+}
+
+.yard-shell.is-dark .yard-supporting-copy,
+.yard-shell.is-dark .yard-arrival-card p,
+.yard-shell.is-dark .yard-leg-card p,
+.yard-shell.is-dark .yard-plan-summary,
+.yard-shell.is-dark .yard-section-heading p,
+.yard-shell.is-dark .yard-empty-state {
+  color: #9db0a5;
+}
+
+.yard-hero-copy {
+  margin-top: 12px;
+  max-width: 28ch;
+}
+
+.yard-hero-actions {
+  margin-top: 16px;
+  justify-content: flex-start;
+}
+
+.yard-button {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.yard-button:hover,
+.yard-arrival-card:hover,
+.yard-leg-card:hover {
+  transform: translateY(-1px);
+}
+
+.yard-button--primary {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(255, 255, 255, 0.92);
+  color: #0f5a34;
+}
+
+.yard-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #5f7268;
+  margin-bottom: 8px;
+}
+
+.yard-shell.is-dark .yard-eyebrow {
+  color: #8ea396;
+}
+
+.yard-section-heading h2,
+.yard-section-heading h3 {
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+.yard-distance-pill,
+.yard-score-pill {
+  padding: 8px 12px;
+  background: rgba(20, 34, 24, 0.06);
+  color: #1f3728;
+}
+
+.yard-shell.is-dark .yard-distance-pill,
+.yard-shell.is-dark .yard-score-pill {
+  background: rgba(255, 255, 255, 0.08);
+  color: #edf7f1;
+}
+
+.yard-arrival-list,
+.yard-leg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.yard-arrival-card,
+.yard-leg-card,
+.yard-recommendation-card {
+  border-radius: 20px;
+  border: 1px solid rgba(20, 34, 24, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.yard-shell.is-dark .yard-arrival-card,
+.yard-shell.is-dark .yard-leg-card,
+.yard-shell.is-dark .yard-recommendation-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.yard-arrival-card,
+.yard-leg-card {
+  padding: 14px 16px;
+}
+
+.yard-recommendation-card {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.yard-route-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--route-color);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.yard-eta-pill {
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+}
+
+.yard-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.yard-field span {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.yard-field select {
+  border-radius: 18px;
+  border: 1px solid rgba(20, 34, 24, 0.12);
+  background: rgba(255, 255, 255, 0.74);
+  color: inherit;
+  padding: 13px 14px;
+  outline: none;
+}
+
+.yard-shell.is-dark .yard-field select {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.yard-empty-state {
+  margin-top: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(20, 34, 24, 0.14);
+  padding: 14px;
+}
+
+.yard-shell.is-dark .yard-empty-state {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.yard-plan-summary {
+  margin-top: 12px;
+}
+
+.yard-inline-note {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.88rem;
+  color: #0f6a3b;
+}
+
+.yard-shell.is-dark .yard-inline-note {
+  color: #77e1a6;
+}
+
+.yard-map-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.yard-map-topbar {
+  margin-bottom: 14px;
+}
+
+.yard-map-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(20, 34, 24, 0.12);
+}
+
+.yard-shell.is-dark .yard-map-stage {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.yard-map-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.yard-map-popup p {
+  margin-top: 4px;
+  color: #5c6d62;
+}
+
+.yard-bus-icon-wrapper {
+  background: transparent;
+  border: 0;
+}
+
+.yard-bus-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.92);
+  background: var(--route-color);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+}
+
+@media (max-width: 1080px) {
+  .yard-shell {
+    height: auto;
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+
+  .yard-map-panel {
+    min-height: 66vh;
+  }
+}
+
+@media (max-width: 720px) {
+  .yard-shell {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .yard-hero-topline,
+  .yard-section-heading,
+  .yard-arrival-title,
+  .yard-hero-actions,
+  .yard-map-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .yard-button,
+  .yard-field select {
+    width: 100%;
+  }
+
+  .yard-map-panel {
+    min-height: 58vh;
+  }
+}

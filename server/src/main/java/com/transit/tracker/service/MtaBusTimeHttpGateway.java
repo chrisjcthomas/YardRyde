@@ -74,10 +74,11 @@ public class MtaBusTimeHttpGateway implements MtaBusTimeGateway {
     }
 
     private String requireApiKey() {
-        if (apiKey == null || apiKey.isBlank()) {
+        String normalizedApiKey = apiKey == null ? "" : apiKey.trim();
+        if (normalizedApiKey.isEmpty()) {
             throw new MtaBusTimeException(MtaBusTimeException.Type.CONFIGURATION, "MTA_BUSTIME_API_KEY is not configured");
         }
-        return apiKey;
+        return normalizedApiKey;
     }
 
     private JsonNode fetchJson(URI uri) {

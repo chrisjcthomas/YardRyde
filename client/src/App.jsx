@@ -1,22 +1,17 @@
-import { Suspense, lazy, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { ACTIVE_SOURCE, DATA_SOURCE } from './constants'
+import { Suspense, lazy } from 'react'
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom'
 
 const NycTransitPage = lazy(() => import('./pages/NycTransitPage'))
-const RiderMap = lazy(() => import('./pages/RiderMap'))
+const JamaicaDemoPage = lazy(() => import('./pages/JamaicaDemoPage'))
 
 function App() {
-  useEffect(() => {
-    document.title = ACTIVE_SOURCE.displayName
-  }, [])
-
-  const landingPage = DATA_SOURCE === 'nyc' ? <NycTransitPage /> : <RiderMap />
-
   return (
     <Suspense fallback={<div className="app-loading">Loading transit view...</div>}>
       <Router>
         <Routes>
-          <Route path="/" element={landingPage} />
+          <Route path="/" element={<JamaicaDemoPage />} />
+          <Route path="/lab/nyc" element={<NycTransitPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </Suspense>

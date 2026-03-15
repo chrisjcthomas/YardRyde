@@ -7,7 +7,6 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@ConditionalOnProperty(name = "transit.data-source", havingValue = "simulator", matchIfMissing = true)
 public class BusSimulatorService {
 
     private static final Logger log = LoggerFactory.getLogger(BusSimulatorService.class);
@@ -27,9 +25,13 @@ public class BusSimulatorService {
     private final TransitWebSocketController eventHandler;
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final ConcurrentHashMap<String, SimBusState> simState = new ConcurrentHashMap<>();
+    private volatile boolean running;
 
     @Value("${simulator.update-interval:2000}")
     private int updateInterval;
+
+    @Value("${transit.data-source:simulator}")
+    private String transitDataSource;
 
     private record SimBus(String id, String route, boolean accessible) {
     }
@@ -85,6 +87,11 @@ public class BusSimulatorService {
 
     @PostConstruct
     public void start() {
+        if (!"simulator".equalsIgnoreCase(transitDataSource == null ? "" : transitDataSource.trim())) {
+            log.info("Bus simulator disabled for transit.data-source={}", transitDataSource);
+            return;
+        }
+
         for (SimBus simBus : SIMULATOR_ROUTES) {
             double[][] coords = ROUTE_COORDINATES.get(simBus.route());
             simState.put(simBus.id(), new SimBusState(simBus.id(), simBus.route(), coords[0][0], coords[0][1]));
@@ -92,6 +99,7 @@ public class BusSimulatorService {
         log.info("Bus simulator initialized with {} buses", SIMULATOR_ROUTES.size());
 
         scheduler.scheduleAtFixedRate(this::update, updateInterval, updateInterval, TimeUnit.MILLISECONDS);
+        running = true;
         log.info("Bus simulator running (updating every {}ms)", updateInterval);
     }
 
@@ -133,12 +141,17 @@ public class BusSimulatorService {
 
     @PreDestroy
     public void stop() {
+        if (!running) {
+            return;
+        }
+
         scheduler.shutdown();
         for (SimBus simBus : SIMULATOR_ROUTES) {
             transitService.removeVehicle(simBus.id());
             simState.remove(simBus.id());
         }
         eventHandler.broadcastVehicleState();
+        running = false;
         log.info("Bus simulator stopped");
     }
 }

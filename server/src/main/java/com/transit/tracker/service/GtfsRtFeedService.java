@@ -8,8 +8,8 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -25,7 +25,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@ConditionalOnProperty(name = "transit.data-source", havingValue = "mta")
 public class GtfsRtFeedService {
 
     private static final Logger log = LoggerFactory.getLogger(GtfsRtFeedService.class);
@@ -35,12 +34,16 @@ public class GtfsRtFeedService {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private volatile Set<String> trackedVehicleIds = Set.of();
+    private volatile boolean running;
 
     @Value("${transit.mta.feed-url}")
     private String feedUrl;
 
     @Value("${transit.mta.api-key:}")
     private String apiKey;
+
+    @Value("${transit.data-source:simulator}")
+    private String transitDataSource;
 
     public GtfsRtFeedService(TransitService transitService, TransitWebSocketController eventHandler) {
         this.transitService = transitService;
@@ -49,16 +52,22 @@ public class GtfsRtFeedService {
 
     @PostConstruct
     public void start() {
+        if (!"mta".equalsIgnoreCase(normalize(transitDataSource))) {
+            log.info("GTFS-RT MTA feed service disabled for transit.data-source={}", transitDataSource);
+            return;
+        }
+
         scheduler.scheduleAtFixedRate(this::pollFeed, 0, 15, TimeUnit.SECONDS);
+        running = true;
         log.info("GTFS-RT MTA feed service started, polling every 15 seconds");
-        log.info("Feed URL: {}", feedUrl);
+        log.info("Feed URL: {}", buildFeedUri());
     }
 
     private void pollFeed() {
         log.info("Starting MTA GTFS-RT feed poll...");
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(feedUrl))
+                    .uri(buildFeedUri())
                     .timeout(Duration.ofSeconds(30))
                     .GET()
                     .build();
@@ -118,11 +127,34 @@ public class GtfsRtFeedService {
 
     @PreDestroy
     public void stop() {
+        if (!running) {
+            return;
+        }
+
         scheduler.shutdown();
         for (String vehicleId : trackedVehicleIds) {
             transitService.removeVehicle(vehicleId);
         }
         trackedVehicleIds = Set.of();
+        running = false;
         log.info("GTFS-RT MTA feed service stopped");
+    }
+
+    private URI buildFeedUri() {
+        String normalizedFeedUrl = normalize(feedUrl);
+        String normalizedApiKey = normalize(apiKey);
+
+        if (normalizedFeedUrl.contains("key=")) {
+            return URI.create(normalizedFeedUrl);
+        }
+
+        return UriComponentsBuilder.fromUriString(normalizedFeedUrl)
+                .queryParam("key", normalizedApiKey)
+                .build(true)
+                .toUri();
+    }
+
+    private String normalize(String value) {
+        return value == null ? "" : value.trim();
     }
 }

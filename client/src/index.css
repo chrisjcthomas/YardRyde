@@ -77,18 +77,26 @@ button {
   min-height: 100vh;
   display: grid;
   grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
-  gap: 24px;
-  padding: 24px;
+  gap: 0;
+  padding: 0;
 }
 
 .rider-sidebar {
-  min-height: calc(100vh - 48px);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
+  border-right: 1px solid var(--border);
 }
 
-.dashboard-card,
+.dashboard-card {
+  border: none;
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow);
+  border-radius: 0;
+}
+
 .rider-map-card {
   border: 1px solid var(--border);
   background: var(--panel-bg);
@@ -461,16 +469,18 @@ body[data-theme='dark'] .ghost-action--chrome {
 }
 
 .rider-map-panel {
-  min-height: calc(100vh - 48px);
+  min-height: 100vh;
 }
 
 .rider-map-card {
   height: 100%;
-  min-height: calc(100vh - 48px);
-  padding: 20px;
+  min-height: 100vh;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
+  border-radius: 0;
+  border: none;
 }
 
 .map-stage {
@@ -730,16 +740,15 @@ body[data-theme='dark'] .ghost-action--chrome {
 
 .nyc-controls {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  bottom: 20px;
+  top: 0;
+  left: 0;
+  bottom: 0;
   width: 400px;
   max-width: 90vw;
   z-index: 1000;
   background: rgba(7, 12, 22, 0.85);
   backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
