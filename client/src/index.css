@@ -77,26 +77,18 @@ button {
   min-height: 100vh;
   display: grid;
   grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
-  gap: 0;
-  padding: 0;
+  gap: 24px;
+  padding: 24px;
 }
 
 .rider-sidebar {
-  min-height: 100vh;
+  min-height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  gap: 0;
-  border-right: 1px solid var(--border);
+  gap: 20px;
 }
 
-.dashboard-card {
-  border: none;
-  background: var(--panel-bg);
-  backdrop-filter: blur(20px);
-  box-shadow: var(--shadow);
-  border-radius: 0;
-}
-
+.dashboard-card,
 .rider-map-card {
   border: 1px solid var(--border);
   background: var(--panel-bg);
@@ -469,18 +461,16 @@ body[data-theme='dark'] .ghost-action--chrome {
 }
 
 .rider-map-panel {
-  min-height: 100vh;
+  min-height: calc(100vh - 48px);
 }
 
 .rider-map-card {
   height: 100%;
-  min-height: 100vh;
-  padding: 0;
+  min-height: calc(100vh - 48px);
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 0;
-  border-radius: 0;
-  border: none;
+  gap: 16px;
 }
 
 .map-stage {
@@ -740,15 +730,16 @@ body[data-theme='dark'] .ghost-action--chrome {
 
 .nyc-controls {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  top: 20px;
+  left: 20px;
+  bottom: 20px;
   width: 400px;
   max-width: 90vw;
   z-index: 1000;
   background: rgba(7, 12, 22, 0.85);
   backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -981,4 +972,401 @@ body[data-theme='dark'] .ghost-action--chrome {
     width: 100%;
     text-align: center;
   }
+}
+
+.fares-shell {
+  min-height: 100vh;
+  background: #0a0f0d;
+  color: #e8f0eb;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  padding-bottom: 80px;
+}
+
+/* ── Header ── */
+.fares-header {
+  background: linear-gradient(160deg, #0d1f14 0%, #0a1a10 100%);
+  border-bottom: 1px solid rgba(23, 161, 78, 0.25);
+  padding: 40px 32px 0;
+}
+
+.fares-header-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto 32px;
+}
+
+/* Jamaica flag strip */
+.fares-header-flag {
+  display: flex;
+  flex-direction: column;
+  width: 6px;
+  height: 64px;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.flag-stripe { flex: 1; }
+.flag-black  { background: #1a1a1a; }
+.flag-gold   { background: #ffd700; }
+.flag-green  { background: #007a5e; }
+
+.fares-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #17a14e;
+  margin: 0 0 6px;
+}
+
+.fares-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px;
+  line-height: 1.1;
+}
+
+.fares-subtitle {
+  font-size: 13px;
+  color: rgba(232, 240, 235, 0.55);
+  margin: 0;
+}
+
+/* Service tabs */
+.fares-service-tabs {
+  display: flex;
+  gap: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-bottom: none;
+}
+
+.fares-service-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 14px 28px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(232, 240, 235, 0.5);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.fares-service-tab strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.fares-service-tab span {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.fares-service-tab:hover {
+  color: rgba(232, 240, 235, 0.85);
+  border-bottom-color: rgba(23, 161, 78, 0.4);
+}
+
+.fares-service-tab.is-active {
+  color: #ffffff;
+  border-bottom-color: #17a14e;
+}
+
+/* ── Summary cards (top row) ── */
+.fares-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 1100px;
+  margin: 28px auto 0;
+  padding: 0 32px;
+}
+
+.fare-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(23, 161, 78, 0.08);
+  border: 1px solid rgba(23, 161, 78, 0.18);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+
+.fare-summary-card:hover {
+  border-color: rgba(23, 161, 78, 0.4);
+}
+
+.fare-summary-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.fare-summary-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fare-summary-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e8f0eb;
+}
+
+.fare-summary-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.fare-summary-amount {
+  font-size: 20px;
+  font-weight: 700;
+  color: #17a14e;
+  white-space: nowrap;
+}
+
+/* ── Route grid ── */
+.fares-routes-section {
+  max-width: 1100px;
+  margin: 40px auto 0;
+  padding: 0 32px;
+}
+
+.fares-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px;
+}
+
+.fares-section-note {
+  font-size: 13px;
+  color: rgba(232, 240, 235, 0.5);
+  margin: 0 0 24px;
+}
+
+.fare-route-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* Route card */
+.fare-route-card {
+  background: #0f1a13;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: default;
+  position: relative;
+}
+
+.fare-route-card.is-hovered {
+  transform: translateY(-3px);
+  border-color: var(--rc);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.fare-card-stripe {
+  height: 4px;
+  background: var(--rc);
+  width: 100%;
+}
+
+.fare-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 8px;
+}
+
+.fare-route-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rc);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 6px;
+  padding: 3px 8px;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+
+.fare-route-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(232, 240, 235, 0.7);
+  line-height: 1.3;
+}
+
+.fare-card-stops {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px 12px;
+  flex-wrap: wrap;
+}
+
+.fare-stop {
+  font-size: 11px;
+  color: rgba(232, 240, 235, 0.45);
+}
+
+.fare-stop-arrow {
+  font-size: 11px;
+  color: var(--rc);
+  opacity: 0.7;
+}
+
+/* Breakdown rows */
+.fare-breakdown {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 0;
+}
+
+.fare-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  transition: background 0.1s;
+}
+
+.fare-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fare-row-icon {
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+}
+
+.fare-row-label {
+  flex: 1;
+  font-size: 12px;
+  color: rgba(232, 240, 235, 0.65);
+}
+
+.fare-row-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e8f0eb;
+}
+
+/* Flat fare (express) */
+.fare-flat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fare-flat-label {
+  font-size: 12px;
+  color: rgba(232, 240, 235, 0.5);
+  font-weight: 500;
+}
+
+.fare-flat-amount {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--rc);
+}
+
+/* Card footer */
+.fare-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.fare-card-stops-count {
+  font-size: 11px;
+  color: rgba(232, 240, 235, 0.3);
+}
+
+.fare-smartercard-note {
+  font-size: 10px;
+  font-weight: 600;
+  color: #ffd700;
+  letter-spacing: 0.04em;
+}
+
+/* ── Info section ── */
+.fares-info {
+  max-width: 1100px;
+  margin: 48px auto 0;
+  padding: 0 32px;
+}
+
+.fares-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.fares-info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.fares-info-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e8f0eb;
+  margin: 0 0 8px;
+}
+
+.fares-info-card p {
+  font-size: 12px;
+  color: rgba(232, 240, 235, 0.5);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.fares-info-card p strong {
+  color: rgba(232, 240, 235, 0.8);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .fares-header { padding: 28px 20px 0; }
+  .fares-summary { grid-template-columns: repeat(2, 1fr); padding: 0 20px; }
+  .fare-summary-amount { font-size: 16px; }
+  .fares-routes-section, .fares-info { padding: 0 20px; }
+  .fares-title { font-size: 24px; }
+  .fare-route-grid { grid-template-columns: 1fr 1fr; }
+  .fares-service-tab { padding: 12px 16px; }
+}
+
+@media (max-width: 480px) {
+  .fares-summary { grid-template-columns: 1fr 1fr; }
+  .fare-route-grid { grid-template-columns: 1fr; }
 }

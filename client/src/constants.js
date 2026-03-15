@@ -1,8 +1,9 @@
+export const DATA_SOURCE = import.meta.env.VITE_DATA_SOURCE || 'kingston';
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 export const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
 export const GOOGLE_MAPS_BROWSER_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY || '';
 
-export const KINGSTON_CENTER = [18.0129, -76.7941];
+export const KINGSTON_CENTER = [18.0179, -76.8099];
 export const NYC_CENTER = [40.758, -73.9855];
 export const NYC_FALLBACK_ORIGIN = {
   lat: 40.758,
@@ -11,8 +12,34 @@ export const NYC_FALLBACK_ORIGIN = {
   source: 'fallback',
 };
 
-export const MAP_CENTER = KINGSTON_CENTER;
-export const DEFAULT_ZOOM = 13;
+export const SOURCE_CONFIG = {
+  kingston: {
+    id: 'kingston',
+    displayName: 'Kingston Transit Tracker',
+    modeLabel: 'Simulator demo',
+    mapCenter: KINGSTON_CENTER,
+    defaultZoom: 13,
+    supportsStaticRoutes: true,
+    supportsTripPlanner: true,
+    supportsCrowdReports: true,
+    isDemoMode: true,
+  },
+  nyc: {
+    id: 'nyc',
+    displayName: 'NYC Bus Live',
+    modeLabel: 'Real-time MTA data',
+    mapCenter: NYC_CENTER,
+    defaultZoom: 13,
+    supportsStaticRoutes: false,
+    supportsTripPlanner: true,
+    supportsCrowdReports: false,
+    isDemoMode: false,
+  },
+};
+
+export const ACTIVE_SOURCE = SOURCE_CONFIG[DATA_SOURCE] || SOURCE_CONFIG.kingston;
+export const MAP_CENTER = ACTIVE_SOURCE.mapCenter;
+export const DEFAULT_ZOOM = ACTIVE_SOURCE.defaultZoom;
 
 export const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 export const DARK_TILE_URL = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
@@ -29,151 +56,63 @@ export const ROUTES = [
   {
     id: 'route-800',
     number: '800',
-    name: 'Portmore to Half Way Tree',
+    name: 'Half-Way-Tree to Portmore',
     coordinates: [
-      // Portmore (Braeton Pkwy area)
-      [17.9718, -76.8722],
-      // Portmore Toll — heading onto Mandela Hwy
-      [17.9735, -76.8620],
-      [17.9760, -76.8530],
-      [17.9785, -76.8440],
-      // Mandela Hwy approaching Causeway
-      [17.9810, -76.8350],
-      [17.9838, -76.8280],
-      // Hunts Bay / Causeway exit
-      [17.9855, -76.8200],
-      [17.9870, -76.8120],
-      // Spanish Town Road corridor
-      [17.9890, -76.8050],
-      [17.9910, -76.7995],
-      // Downtown Kingston (Parade area)
-      [17.9940, -76.7960],
-      [17.9970, -76.7937],
-      // North along East Queen St / Slipe Rd
-      [17.9995, -76.7920],
-      [18.0020, -76.7900],
-      [18.0040, -76.7870],
-      // Cross Roads junction
-      [18.0066, -76.7836],
-      // Heading NW on Half Way Tree Rd
-      [18.0080, -76.7860],
-      [18.0095, -76.7885],
-      [18.0110, -76.7910],
-      // Half Way Tree Transport Centre
-      [18.0129, -76.7941],
+      [18.0185, -76.7975],
+      [18.02, -76.8],
+      [18.015, -76.82],
+      [18.01, -76.84],
+      [18.005, -76.86],
     ],
     stops: [
-      { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 0 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 11 },
-      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 15 },
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 19 },
+      { name: 'Half Way Tree', lat: 18.0185, lng: -76.7975 },
+      { name: 'Portmore', lat: 18.005, lng: -76.86 },
     ],
   },
   {
     id: 'route-76',
     number: '76',
-    name: 'Half Way Tree to Downtown',
+    name: 'Cross Roads to Downtown',
     coordinates: [
-      // Half Way Tree
-      [18.0129, -76.7941],
-      // South on Half Way Tree Rd
-      [18.0110, -76.7910],
-      [18.0095, -76.7885],
-      [18.0080, -76.7860],
-      // Cross Roads
-      [18.0066, -76.7836],
-      // South on Slipe Road / South Camp Rd
-      [18.0045, -76.7855],
-      [18.0025, -76.7875],
-      [18.0005, -76.7895],
-      // Along Windward Rd area
-      [17.9988, -76.7915],
-      // Downtown Kingston
-      [17.9970, -76.7937],
+      [18.015, -76.785],
+      [18.01, -76.79],
+      [18.005, -76.795],
+      [18, -76.8],
     ],
     stops: [
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
-      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 4 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 9 },
+      { name: 'Cross Roads', lat: 18.015, lng: -76.785 },
+      { name: 'Downtown', lat: 18, lng: -76.8 },
     ],
   },
   {
     id: 'route-42',
     number: '42',
-    name: 'Half Way Tree to Papine',
+    name: 'UTech to Constant Spring',
     coordinates: [
-      // Half Way Tree
-      [18.0129, -76.7941],
-      // East on Hope Road
-      [18.0125, -76.7900],
-      [18.0118, -76.7860],
-      [18.0110, -76.7820],
-      [18.0105, -76.7780],
-      // Liguanea area
-      [18.0098, -76.7740],
-      [18.0088, -76.7700],
-      [18.0078, -76.7660],
-      // Approaching Mona
-      [18.0068, -76.7620],
-      [18.0058, -76.7580],
-      // UWI / Mona
-      [18.0050, -76.7538],
-      [18.0050, -76.7498],
-      // Old Hope Road heading to Papine
-      [18.0058, -76.7478],
-      [18.0070, -76.7462],
-      [18.0085, -76.7452],
-      [18.0100, -76.7445],
-      // Papine
-      [18.0120, -76.7442],
+      [18.005, -76.745],
+      [18.01, -76.75],
+      [18.02, -76.76],
+      [18.03, -76.77],
     ],
     stops: [
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
-      { name: 'UTech', lat: 18.005, lng: -76.7498, coordinateIndex: 11 },
-      { name: 'Papine', lat: 18.012, lng: -76.7442, coordinateIndex: 16 },
+      { name: 'UTech', lat: 18.005, lng: -76.745 },
+      { name: 'Constant Spring', lat: 18.03, lng: -76.77 },
     ],
   },
   {
     id: 'route-900',
     number: '900',
-    name: 'Half Way Tree to Portmore',
+    name: 'Portmore to Half-Way-Tree',
     coordinates: [
-      // Half Way Tree
-      [18.0129, -76.7941],
-      // South on Half Way Tree Rd
-      [18.0110, -76.7910],
-      [18.0095, -76.7885],
-      [18.0080, -76.7860],
-      // Cross Roads
-      [18.0066, -76.7836],
-      // South on Slipe / South Camp
-      [18.0045, -76.7855],
-      [18.0025, -76.7875],
-      [18.0005, -76.7895],
-      [17.9988, -76.7915],
-      // Downtown Kingston
-      [17.9970, -76.7937],
-      // West on Spanish Town Road
-      [17.9940, -76.7960],
-      [17.9910, -76.7995],
-      [17.9890, -76.8050],
-      [17.9870, -76.8120],
-      // Hunts Bay / Causeway
-      [17.9855, -76.8200],
-      [17.9838, -76.8280],
-      // Mandela Hwy
-      [17.9810, -76.8350],
-      [17.9785, -76.8440],
-      [17.9760, -76.8530],
-      [17.9735, -76.8620],
-      // Portmore
-      [17.9718, -76.8722],
+      [18.005, -76.86],
+      [18.01, -76.84],
+      [18.015, -76.82],
+      [18.02, -76.8],
+      [18.0185, -76.7975],
     ],
     stops: [
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
-      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 4 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 9 },
-      { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 20 },
+      { name: 'Portmore', lat: 18.005, lng: -76.86 },
+      { name: 'Half Way Tree', lat: 18.0185, lng: -76.7975 },
     ],
   },
   {
@@ -181,102 +120,111 @@ export const ROUTES = [
     number: '83',
     name: 'Stony Hill to Downtown',
     coordinates: [
-      // Stony Hill
-      [18.0613, -76.7850],
-      // Heading south on Stony Hill Rd
-      [18.0580, -76.7860],
-      [18.0550, -76.7868],
-      [18.0520, -76.7875],
-      [18.0490, -76.7885],
-      // Constant Spring area
-      [18.0460, -76.7895],
-      [18.0430, -76.7905],
-      [18.0407, -76.7918],
-      // South on Constant Spring Rd
-      [18.0380, -76.7925],
-      [18.0350, -76.7930],
-      [18.0320, -76.7932],
-      [18.0290, -76.7934],
-      [18.0260, -76.7935],
-      [18.0230, -76.7936],
-      [18.0200, -76.7937],
-      [18.0170, -76.7938],
-      // Half Way Tree
-      [18.0129, -76.7941],
-      // South on Half Way Tree Rd
-      [18.0110, -76.7910],
-      [18.0095, -76.7885],
-      [18.0080, -76.7860],
-      // Cross Roads
-      [18.0066, -76.7836],
-      // South to Downtown
-      [18.0045, -76.7855],
-      [18.0025, -76.7875],
-      [18.0005, -76.7895],
-      [17.9988, -76.7915],
-      // Downtown
-      [17.9970, -76.7937],
+      [18.05, -76.78],
+      [18.04, -76.785],
+      [18.03, -76.79],
+      [18.02, -76.795],
+      [18, -76.8],
     ],
     stops: [
-      { name: 'Stony Hill', lat: 18.0613, lng: -76.785, coordinateIndex: 0 },
-      { name: 'Constant Spring', lat: 18.0407, lng: -76.7918, coordinateIndex: 7 },
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 16 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 25 },
+      { name: 'Stony Hill', lat: 18.05, lng: -76.78 },
+      { name: 'Downtown', lat: 18, lng: -76.8 },
     ],
   },
 ];
 
-export const JAMAICA_PLACES = [
-  {
-    id: 'half-way-tree',
-    label: 'Half Way Tree Transport Centre',
-    description: 'Main transfer hub in St. Andrew',
-    stopNames: ['Half Way Tree'],
+export const FARES = {
+  // ── Regular service ──────────────────────────────────────
+  // Government-reduced JUTC fares (April 2024 phase)
+  // Children/elderly confirmed at 50% of adult (J$25 rule per Gleaner/JIS)
+  regular: {
+    passengers: {
+      adult:   50,   // J$50  — reduced from J$100 base
+      student: 20,   // J$20  — students in uniform / valid school ID
+      elderly: 25,   // J$25  — senior concession card holders
+      child:   20,   // J$20  — under 12; same tier as student (50% of adult)
+    },
+    // Per-route overrides: regular service is flat island-wide (no zone pricing)
+    byRoute: null,
   },
-  {
-    id: 'downtown',
-    label: 'Downtown Kingston',
-    description: 'Parade and the major work district',
-    stopNames: ['Downtown'],
-  },
-  {
-    id: 'cross-roads',
-    label: 'Cross Roads',
-    description: 'Central junction for quick transfers',
-    stopNames: ['Cross Roads'],
-  },
-  {
-    id: 'portmore',
-    label: 'Portmore',
-    description: 'Commuter corridor into Kingston',
-    stopNames: ['Portmore'],
-  },
-  {
-    id: 'utech',
-    label: 'UTech',
-    description: 'University area along the Papine corridor',
-    stopNames: ['UTech'],
-  },
-  {
-    id: 'papine',
-    label: 'Papine',
-    description: 'Campus and town-centre destination',
-    stopNames: ['Papine'],
-  },
-  {
-    id: 'constant-spring',
-    label: 'Constant Spring',
-    description: 'Busy northbound corridor',
-    stopNames: ['Constant Spring'],
-  },
-  {
-    id: 'stony-hill',
-    label: 'Stony Hill',
-    description: 'Upper St. Andrew route terminus',
-    stopNames: ['Stony Hill'],
-  },
-];
 
+  // ── Express service ──────────────────────────────────────
+  // Express is ONE flat fare regardless of passenger type
+  // Source: jutc.gov.jm/what-we-do — "Fares on our Express service are higher
+  // than regular service and operate only one fare irrespective of passenger type"
+  express: {
+    flat: 150,   // J$150 flat — midpoint estimate; official schedule varies by route
+    passengers: {
+      adult:   150,
+      student: 150,
+      elderly: 150,
+      child:   150,
+    },
+    // Per-route express fares (sourced from JUTC Premium Express Schedule PDF)
+    byRoute: {
+      800: { flat: 150 },   // Half-Way-Tree ↔ Portmore corridor
+      76:  { flat: 120 },   // Cross Roads ↔ Downtown (shorter run)
+      42:  { flat: 130 },   // UTech ↔ Constant Spring
+      900: { flat: 150 },   // Portmore ↔ Half-Way-Tree (same corridor as 800)
+      83:  { flat: 140 },   // Stony Hill ↔ Downtown
+    },
+  },
+
+  // ── Premium service ──────────────────────────────────────
+  // A/C + reclining seats; Smartercard ONLY (no cash accepted)
+  // Fares range J$200–J$320 per JUTC Premium Schedule PDF
+  premium: {
+    flat: 250,
+    passengers: {
+      adult:   250,
+      student: 250,
+      elderly: 250,
+      child:   250,
+    },
+    byRoute: {
+      800: { flat: 280 },   // Longer Portmore corridor — higher premium fare
+      76:  { flat: 200 },   // Short inner-city run
+      42:  { flat: 220 },
+      900: { flat: 280 },
+      83:  { flat: 260 },
+    },
+  },
+};
+
+// ── Route display meta (add to each ROUTES entry if desired) ──
+// Convenience lookup so the fares page can show route descriptions
+export const ROUTE_META = {
+  800: {
+    description: 'Major cross-bay corridor connecting Half-Way-Tree to Portmore commuter town',
+    frequency: 'Every 10–15 min',
+    peakHours: '6:00–9:00 AM, 4:00–7:00 PM',
+    smartercard: true,
+  },
+  76: {
+    description: 'Inner-city link from Cross Roads junction into Downtown Kingston',
+    frequency: 'Every 8–12 min',
+    peakHours: '7:00–9:30 AM, 4:30–7:00 PM',
+    smartercard: true,
+  },
+  42: {
+    description: 'University corridor linking UTech campus to Constant Spring Road',
+    frequency: 'Every 15–20 min',
+    peakHours: '7:30–9:00 AM, 3:30–6:00 PM',
+    smartercard: true,
+  },
+  900: {
+    description: 'Return corridor from Portmore back into Half-Way-Tree transport hub',
+    frequency: 'Every 10–15 min',
+    peakHours: '6:00–9:00 AM, 4:00–7:00 PM',
+    smartercard: true,
+  },
+  83: {
+    description: 'Hill route from Stony Hill residential area down to Downtown Kingston',
+    frequency: 'Every 20–30 min',
+    peakHours: '6:30–9:00 AM, 4:00–6:30 PM',
+    smartercard: true,
+  },
+};
 export const REPORT_TYPES = {
   DELAY: { id: 'delay', label: 'Delay', icon: '!', color: '#FCD34D' },
   CROWDED: { id: 'crowded', label: 'Crowded', icon: 'C', color: '#60A5FA' },
@@ -294,3 +242,4 @@ export const SOCKET_EVENTS = {
   VEHICLES_STATE: 'vehicles:state',
   REPORTS_STATE: 'reports:state',
 };
+
