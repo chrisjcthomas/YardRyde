@@ -31,17 +31,42 @@ export const ROUTES = [
     number: '800',
     name: 'Portmore to Half Way Tree',
     coordinates: [
+      // Portmore (Braeton Pkwy area)
       [17.9718, -76.8722],
-      [17.9838, -76.8396],
-      [17.997, -76.7937],
+      // Portmore Toll — heading onto Mandela Hwy
+      [17.9735, -76.8620],
+      [17.9760, -76.8530],
+      [17.9785, -76.8440],
+      // Mandela Hwy approaching Causeway
+      [17.9810, -76.8350],
+      [17.9838, -76.8280],
+      // Hunts Bay / Causeway exit
+      [17.9855, -76.8200],
+      [17.9870, -76.8120],
+      // Spanish Town Road corridor
+      [17.9890, -76.8050],
+      [17.9910, -76.7995],
+      // Downtown Kingston (Parade area)
+      [17.9940, -76.7960],
+      [17.9970, -76.7937],
+      // North along East Queen St / Slipe Rd
+      [17.9995, -76.7920],
+      [18.0020, -76.7900],
+      [18.0040, -76.7870],
+      // Cross Roads junction
       [18.0066, -76.7836],
+      // Heading NW on Half Way Tree Rd
+      [18.0080, -76.7860],
+      [18.0095, -76.7885],
+      [18.0110, -76.7910],
+      // Half Way Tree Transport Centre
       [18.0129, -76.7941],
     ],
     stops: [
       { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 0 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 2 },
-      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 3 },
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 4 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 11 },
+      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 15 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 19 },
     ],
   },
   {
@@ -49,14 +74,27 @@ export const ROUTES = [
     number: '76',
     name: 'Half Way Tree to Downtown',
     coordinates: [
+      // Half Way Tree
       [18.0129, -76.7941],
+      // South on Half Way Tree Rd
+      [18.0110, -76.7910],
+      [18.0095, -76.7885],
+      [18.0080, -76.7860],
+      // Cross Roads
       [18.0066, -76.7836],
-      [17.997, -76.7937],
+      // South on Slipe Road / South Camp Rd
+      [18.0045, -76.7855],
+      [18.0025, -76.7875],
+      [18.0005, -76.7895],
+      // Along Windward Rd area
+      [17.9988, -76.7915],
+      // Downtown Kingston
+      [17.9970, -76.7937],
     ],
     stops: [
       { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
-      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 1 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 2 },
+      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 4 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 9 },
     ],
   },
   {
@@ -64,14 +102,35 @@ export const ROUTES = [
     number: '42',
     name: 'Half Way Tree to Papine',
     coordinates: [
+      // Half Way Tree
       [18.0129, -76.7941],
-      [18.005, -76.7498],
-      [18.012, -76.7442],
+      // East on Hope Road
+      [18.0125, -76.7900],
+      [18.0118, -76.7860],
+      [18.0110, -76.7820],
+      [18.0105, -76.7780],
+      // Liguanea area
+      [18.0098, -76.7740],
+      [18.0088, -76.7700],
+      [18.0078, -76.7660],
+      // Approaching Mona
+      [18.0068, -76.7620],
+      [18.0058, -76.7580],
+      // UWI / Mona
+      [18.0050, -76.7538],
+      [18.0050, -76.7498],
+      // Old Hope Road heading to Papine
+      [18.0058, -76.7478],
+      [18.0070, -76.7462],
+      [18.0085, -76.7452],
+      [18.0100, -76.7445],
+      // Papine
+      [18.0120, -76.7442],
     ],
     stops: [
       { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
-      { name: 'UTech', lat: 18.005, lng: -76.7498, coordinateIndex: 1 },
-      { name: 'Papine', lat: 18.012, lng: -76.7442, coordinateIndex: 2 },
+      { name: 'UTech', lat: 18.005, lng: -76.7498, coordinateIndex: 11 },
+      { name: 'Papine', lat: 18.012, lng: -76.7442, coordinateIndex: 16 },
     ],
   },
   {
@@ -79,17 +138,42 @@ export const ROUTES = [
     number: '900',
     name: 'Half Way Tree to Portmore',
     coordinates: [
+      // Half Way Tree
       [18.0129, -76.7941],
+      // South on Half Way Tree Rd
+      [18.0110, -76.7910],
+      [18.0095, -76.7885],
+      [18.0080, -76.7860],
+      // Cross Roads
       [18.0066, -76.7836],
-      [17.997, -76.7937],
-      [17.9838, -76.8396],
+      // South on Slipe / South Camp
+      [18.0045, -76.7855],
+      [18.0025, -76.7875],
+      [18.0005, -76.7895],
+      [17.9988, -76.7915],
+      // Downtown Kingston
+      [17.9970, -76.7937],
+      // West on Spanish Town Road
+      [17.9940, -76.7960],
+      [17.9910, -76.7995],
+      [17.9890, -76.8050],
+      [17.9870, -76.8120],
+      // Hunts Bay / Causeway
+      [17.9855, -76.8200],
+      [17.9838, -76.8280],
+      // Mandela Hwy
+      [17.9810, -76.8350],
+      [17.9785, -76.8440],
+      [17.9760, -76.8530],
+      [17.9735, -76.8620],
+      // Portmore
       [17.9718, -76.8722],
     ],
     stops: [
       { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 0 },
-      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 1 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 2 },
-      { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 4 },
+      { name: 'Cross Roads', lat: 18.0066, lng: -76.7836, coordinateIndex: 4 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 9 },
+      { name: 'Portmore', lat: 17.9718, lng: -76.8722, coordinateIndex: 20 },
     ],
   },
   {
@@ -97,16 +181,47 @@ export const ROUTES = [
     number: '83',
     name: 'Stony Hill to Downtown',
     coordinates: [
-      [18.0613, -76.785],
+      // Stony Hill
+      [18.0613, -76.7850],
+      // Heading south on Stony Hill Rd
+      [18.0580, -76.7860],
+      [18.0550, -76.7868],
+      [18.0520, -76.7875],
+      [18.0490, -76.7885],
+      // Constant Spring area
+      [18.0460, -76.7895],
+      [18.0430, -76.7905],
       [18.0407, -76.7918],
+      // South on Constant Spring Rd
+      [18.0380, -76.7925],
+      [18.0350, -76.7930],
+      [18.0320, -76.7932],
+      [18.0290, -76.7934],
+      [18.0260, -76.7935],
+      [18.0230, -76.7936],
+      [18.0200, -76.7937],
+      [18.0170, -76.7938],
+      // Half Way Tree
       [18.0129, -76.7941],
-      [17.997, -76.7937],
+      // South on Half Way Tree Rd
+      [18.0110, -76.7910],
+      [18.0095, -76.7885],
+      [18.0080, -76.7860],
+      // Cross Roads
+      [18.0066, -76.7836],
+      // South to Downtown
+      [18.0045, -76.7855],
+      [18.0025, -76.7875],
+      [18.0005, -76.7895],
+      [17.9988, -76.7915],
+      // Downtown
+      [17.9970, -76.7937],
     ],
     stops: [
       { name: 'Stony Hill', lat: 18.0613, lng: -76.785, coordinateIndex: 0 },
-      { name: 'Constant Spring', lat: 18.0407, lng: -76.7918, coordinateIndex: 1 },
-      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 2 },
-      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 3 },
+      { name: 'Constant Spring', lat: 18.0407, lng: -76.7918, coordinateIndex: 7 },
+      { name: 'Half Way Tree', lat: 18.0129, lng: -76.7941, coordinateIndex: 16 },
+      { name: 'Downtown', lat: 17.997, lng: -76.7937, coordinateIndex: 25 },
     ],
   },
 ];

@@ -61,7 +61,7 @@ class MtaBusTimeParserTest {
                                 "MonitoredCall": {
                                   "StopPointRef": "308214",
                                   "StopPointName": ["W 42 St/7 Av"],
-                                  "ExpectedArrivalTime": "2026-03-13T12:05:00Z"
+                                  "ExpectedArrivalTime": "2026-03-14T12:05:00Z"
                                 }
                               }
                             }
@@ -80,7 +80,7 @@ class MtaBusTimeParserTest {
         assertEquals("M7", arrivals.getFirst().routeId());
         assertEquals("Downtown", arrivals.getFirst().destination());
         assertEquals("W 42 St/7 Av", arrivals.getFirst().stopName());
-        assertEquals(Instant.parse("2026-03-13T12:05:00Z"), arrivals.getFirst().expectedArrivalTime());
+        assertEquals(Instant.parse("2026-03-14T12:05:00Z"), arrivals.getFirst().expectedArrivalTime());
         assertNotNull(arrivals.getFirst().direction());
     }
 }

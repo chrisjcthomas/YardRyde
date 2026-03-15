@@ -20,7 +20,7 @@ class NycTransitServiceTest {
         TransitService transitService = new TransitService();
         Vehicle nearbyVehicle = new Vehicle("bus-1", "MTA NYCT_M7", 40.7581, -73.9854);
         nearbyVehicle.setRouteId("MTA NYCT_M7");
-        nearbyVehicle.setTimestamp(Instant.parse("2026-03-13T12:00:00Z"));
+        nearbyVehicle.setTimestamp(Instant.parse("2026-03-14T12:00:00Z"));
         transitService.addOrUpdateVehicle("bus-1", nearbyVehicle);
 
         Vehicle farVehicle = new Vehicle("bus-2", "MTA NYCT_B63", 40.70, -73.90);
@@ -33,11 +33,11 @@ class NycTransitServiceTest {
                         new MtaStop("MTA_999999", "999999", "Far Stop", 40.74, -73.99, List.of("B63"))
                 ),
                 List.of(
-                        new MtaArrival("bus-1", "M7", "Downtown", "0", "308214", "W 42 St/7 Av", Instant.parse("2026-03-13T12:05:00Z"))
+                        new MtaArrival("bus-1", "M7", "Downtown", "0", "308214", "W 42 St/7 Av", Instant.parse("2026-03-14T12:05:00Z"))
                 )
         );
 
-        MutableClock clock = new MutableClock(Instant.parse("2026-03-13T12:00:00Z"));
+        MutableClock clock = new MutableClock(Instant.parse("2026-03-14T12:00:00Z"));
         NycTransitService service = new NycTransitService(transitService, gateway, clock, Duration.ofSeconds(10));
 
         NycNearbyResponse response = service.getNearby(40.7580, -73.9855, 0.02, 0.02, "gps");
@@ -57,9 +57,9 @@ class NycTransitServiceTest {
         TransitService transitService = new TransitService();
         FakeGateway gateway = new FakeGateway(
                 List.of(new MtaStop("MTA_308214", "308214", "W 42 St/7 Av", 40.7581, -73.9854, List.of("M7"))),
-                List.of(new MtaArrival("bus-1", "M7", "Downtown", "0", "308214", "W 42 St/7 Av", Instant.parse("2026-03-13T12:05:00Z")))
+                List.of(new MtaArrival("bus-1", "M7", "Downtown", "0", "308214", "W 42 St/7 Av", Instant.parse("2026-03-14T12:05:00Z")))
         );
-        MutableClock clock = new MutableClock(Instant.parse("2026-03-13T12:00:00Z"));
+        MutableClock clock = new MutableClock(Instant.parse("2026-03-14T12:00:00Z"));
         NycTransitService service = new NycTransitService(transitService, gateway, clock, Duration.ofSeconds(10));
 
         service.getNearby(40.7580, -73.9855, 0.02, 0.02, "gps");

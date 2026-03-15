@@ -232,7 +232,7 @@ Confirm to user that their report was successfully sent.
 
 ## ⏱️ **HOUR-BY-HOUR IMPLEMENTATION**
 
-### **Hour 0 (Pre-Hackathon Prep)**
+### **Hour 0 (Starting Now)**
 - ✅ Create React + Vite project
 - ✅ Install dependencies: `react-router-dom`, `leaflet`, `react-leaflet`, `socket.io-client`
 - ✅ Create `/src/constants.js` with 5 mock routes:

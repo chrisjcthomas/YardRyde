@@ -2,9 +2,8 @@
 ## Real-Time Transit Tracker for Jamaica
 
 **Version:** 1.0  
-**Date:** February 11, 2026  
-**Author:** Intellibus Hackathon Team  
-
+**Date:** March 14, 2026
+**Author:** Intellibus Hackathon Team
 ---
 
 ## 1. Overview

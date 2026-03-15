@@ -1,5 +1,5 @@
 # Real-Time Transit Tracker for Jamaica
-A tightened "Goldilocks" 5-hour hackathon plan for the Intellibus Hackathon 2026.
+A tightened "Goldilocks" 5-hour hackathon plan for today's Intellibus Hackathon 2026.
 
 ## Tech Stack
 * **Frontend**: React + Vite, Leaflet (maps), Socket.io client, Tailwind CSS
@@ -13,7 +13,7 @@ A tightened "Goldilocks" 5-hour hackathon plan for the Intellibus Hackathon 2026
 * Get **ngrok + multi-device** working early so you don't die in deployment hell at the end
 * Add exactly **one "wow" feature** (ETA calculation showing "~3 min" above bus markers) and include local "vibe" reports (Cold AC) alongside standard reports (Delay, Crowded, Standing Room)
 
-## Hour 0 (Before Hackathon) — Prep
+## Hour 0 (Starting Now) — Prep
 Do this the night before or in the 15-20 min buffer before coding starts.
 
 * Install Node.js, test `npm init` and React + Vite scaffold

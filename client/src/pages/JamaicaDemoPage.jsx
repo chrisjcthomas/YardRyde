@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
 import { divIcon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import './JamaicaDemoPage.css';
 import {
-  DARK_TILE_URL,
   DEFAULT_ZOOM,
   JAMAICA_PLACES,
   KINGSTON_CENTER,
@@ -36,7 +33,12 @@ const DEFAULT_USER_LOCATION = {
   source: 'demo',
 };
 
-const SIMULATION_INTERVAL_MS = 2500;
+// --- Smooth simulation config ---
+// Each "tick" is 100ms; the bus interpolates over INTERPOLATION_STEPS ticks
+// between two coordinates, giving a slow, steady movement.
+const TICK_INTERVAL_MS = 100;
+const INTERPOLATION_STEPS = 150; // ~15 seconds per short road segment — smooth, road-following crawl
+
 const ALL_STOPS = getAllStops();
 const ROUTES_BY_NUMBER = new Map(ROUTES.map((route) => [route.number, route]));
 const STOPS_BY_NAME = new Map(ALL_STOPS.map((stop) => [stop.name, stop]));
@@ -58,7 +60,8 @@ function isWithinKingston(lat, lng) {
   );
 }
 
-function createSimulationVehicle(seed) {
+// Create a vehicle with interpolation state
+function createSmoothVehicle(seed) {
   const route = ROUTES_BY_NUMBER.get(seed.route);
   const [lat, lng] = route.coordinates[seed.currentIndex];
 
@@ -66,28 +69,94 @@ function createSimulationVehicle(seed) {
     ...seed,
     lat,
     lng,
+    // interpolation state
+    fromIndex: seed.currentIndex,
+    toIndex: seed.currentIndex,
+    progress: 0,
     timestamp: new Date().toISOString(),
   };
 }
 
-function moveSimulationVehicle(vehicle) {
+// Advance a vehicle one tiny interpolation step
+function tickVehicle(vehicle) {
   const route = ROUTES_BY_NUMBER.get(vehicle.route);
-  let nextDirection = vehicle.direction;
-  let nextIndex = vehicle.currentIndex + vehicle.direction;
+  const coords = route.coordinates;
 
-  if (nextIndex >= route.coordinates.length) {
-    nextDirection = -1;
-    nextIndex = route.coordinates.length - 2;
-  } else if (nextIndex < 0) {
-    nextDirection = 1;
-    nextIndex = 1;
+  let { fromIndex, toIndex, progress, direction, currentIndex } = vehicle;
+
+  // If we haven't set a target segment yet, pick the next one
+  if (fromIndex === toIndex) {
+    let nextIndex = currentIndex + direction;
+    if (nextIndex >= coords.length) {
+      direction = -1;
+      nextIndex = coords.length - 2;
+    } else if (nextIndex < 0) {
+      direction = 1;
+      nextIndex = 1;
+    }
+    fromIndex = currentIndex;
+    toIndex = nextIndex;
+    progress = 0;
   }
 
-  return createSimulationVehicle({
+  // Advance progress
+  progress += 1;
+
+  if (progress >= INTERPOLATION_STEPS) {
+    // Arrived at target coordinate
+    const [lat, lng] = coords[toIndex];
+    return {
+      ...vehicle,
+      lat,
+      lng,
+      currentIndex: toIndex,
+      fromIndex: toIndex,
+      toIndex: toIndex,
+      progress: 0,
+      direction,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  // Interpolate between fromIndex and toIndex
+  const t = progress / INTERPOLATION_STEPS;
+  const [fromLat, fromLng] = coords[fromIndex];
+  const [toLat, toLng] = coords[toIndex];
+  const lat = fromLat + (toLat - fromLat) * t;
+  const lng = fromLng + (toLng - fromLng) * t;
+
+  return {
     ...vehicle,
-    currentIndex: nextIndex,
-    direction: nextDirection,
-  });
+    lat,
+    lng,
+    fromIndex,
+    toIndex,
+    progress,
+    direction,
+    currentIndex: vehicle.currentIndex,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function MapController({ focusTarget }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!focusTarget) {
+      return;
+    }
+
+    if (focusTarget.bounds) {
+      map.fitBounds(focusTarget.bounds, { padding: [40, 40], maxZoom: 14 });
+      return;
+    }
+
+    if (focusTarget.center) {
+      map.setView(focusTarget.center, focusTarget.zoom ?? map.getZoom(), { animate: true });
+    }
+  }, [focusTarget, map]);
+
+  return null;
 }
 
 function getFocusTarget(userLocation, recommendation) {
@@ -124,52 +193,30 @@ function getFocusTarget(userLocation, recommendation) {
   return { bounds: points };
 }
 
-function MapController({ focusTarget }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!focusTarget) {
-      return;
-    }
-
-    if (focusTarget.bounds) {
-      map.fitBounds(focusTarget.bounds, { padding: [40, 40], maxZoom: 14 });
-      return;
-    }
-
-    if (focusTarget.center) {
-      map.setView(focusTarget.center, focusTarget.zoom ?? map.getZoom(), { animate: true });
-    }
-  }, [focusTarget, map]);
-
-  return null;
-}
-
-function createBusIcon(routeNumber) {
-  const color = ROUTE_COLORS[routeNumber] || '#0f172a';
-
-  return divIcon({
-    className: 'yard-bus-icon-wrapper',
-    html: `<span class="yard-bus-icon" style="--route-color:${color};">${routeNumber}</span>`,
-    iconSize: [40, 40],
-    iconAnchor: [20, 20],
-  });
+function getMarkerColor(routeId) {
+  const palette = ['#2563eb', '#7c3aed', '#dc2626', '#0f766e', '#ea580c', '#0891b2', '#be123c'];
+  const seed = `${routeId || ''}`.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return palette[seed % palette.length];
 }
 
 function JamaicaDemoPage() {
-  const [darkMode, setDarkMode] = useState(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState('');
   const [userLocation, setUserLocation] = useState(DEFAULT_USER_LOCATION);
-  const [locationMessage, setLocationMessage] = useState('Using a Kingston demo starting point.');
-  const [vehicles, setVehicles] = useState(() => SIMULATION_FLEET.map(createSimulationVehicle));
+  const [locationMessage, setLocationMessage] = useState('');
+  const [vehicles, setVehicles] = useState(() => SIMULATION_FLEET.map(createSmoothVehicle));
+  const [selectedTab, setSelectedTab] = useState('nearby');
+  const [mapFocus, setMapFocus] = useState({ center: KINGSTON_CENTER, zoom: DEFAULT_ZOOM });
+
+  const vehiclesRef = useRef(vehicles);
+  vehiclesRef.current = vehicles;
 
   useEffect(() => {
-    document.title = 'YardRyde';
+    document.title = 'Kingston Bus Lab';
   }, []);
 
   const handleUseMyLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setLocationMessage('This browser cannot share location, so the demo stays in Half Way Tree.');
+      setLocationMessage('This browser cannot share location.');
       return;
     }
 
@@ -180,20 +227,20 @@ function JamaicaDemoPage() {
 
         if (!isWithinKingston(nextLat, nextLng)) {
           setUserLocation(DEFAULT_USER_LOCATION);
-          setLocationMessage('Your phone is outside Kingston, so the demo starts in Half Way Tree.');
+          setLocationMessage('Outside Kingston — using Half Way Tree.');
           return;
         }
 
         setUserLocation({
           lat: nextLat,
           lng: nextLng,
-          label: 'Your current location',
+          label: 'Current location',
           source: 'gps',
         });
-        setLocationMessage('Using your current location inside Kingston / St. Andrew.');
+        setLocationMessage('Using your current location.');
       },
       () => {
-        setLocationMessage('Location access is blocked, so the demo starts in Half Way Tree.');
+        setLocationMessage('Location access blocked — using Half Way Tree.');
       },
       {
         enableHighAccuracy: true,
@@ -203,10 +250,11 @@ function JamaicaDemoPage() {
     );
   }, []);
 
+  // Smooth animation loop — runs every 100ms, interpolating bus positions
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setVehicles((currentVehicles) => currentVehicles.map(moveSimulationVehicle));
-    }, SIMULATION_INTERVAL_MS);
+      setVehicles((currentVehicles) => currentVehicles.map(tickVehicle));
+    }, TICK_INTERVAL_MS);
 
     return () => window.clearInterval(intervalId);
   }, []);
@@ -281,254 +329,287 @@ function JamaicaDemoPage() {
 
   const walkingMinutes = closestStop ? Math.max(1, Math.round((closestStop.distanceKm / 5) * 60)) : null;
 
+  const focusMapPoint = useCallback((lng, lat, zoom = 17) => {
+    setMapFocus({ center: [lat, lng], zoom });
+  }, []);
+
   return (
-    <div className={`yard-shell ${darkMode ? 'is-dark' : ''}`}>
-      <aside className="yard-panel">
-        <section className="yard-card yard-card--hero">
-          <div className="yard-hero-topline">
-            <span className="yard-badge">Pilot simulation</span>
-            <Link className="yard-lab-link" to="/lab/nyc">
-              NYC live lab
-            </Link>
-          </div>
+    <div className="nyc-shell">
+      {/* Full-screen map — using same LIGHT tiles as NYC */}
+      <div className="nyc-map">
+        <MapContainer center={KINGSTON_CENTER} zoom={DEFAULT_ZOOM} className="map-canvas" zoomControl={false} attributionControl={false}>
+          <TileLayer
+            key="light"
+            url={TILE_URL}
+          />
+          <MapController focusTarget={mapFocus} />
 
-          <h1>YardRyde</h1>
-          <p className="yard-hero-copy">
-            See the next JUTC bus near you, then get a simple bus recommendation for where you need to go.
-          </p>
+          {/* User location */}
+          <CircleMarker center={[userLocation.lat, userLocation.lng]} radius={8} fillColor="#2563eb" fillOpacity={0.85} stroke={false} />
 
-          <div className="yard-hero-actions">
-            <button type="button" className="yard-button yard-button--primary" onClick={handleUseMyLocation}>
-              Use my location
-            </button>
-            <button type="button" className="yard-button" onClick={() => setDarkMode((current) => !current)}>
-              {darkMode ? 'Light map' : 'Dark map'}
-            </button>
-            <button
-              type="button"
-              className="yard-button"
-              onClick={() => {
-                setUserLocation(DEFAULT_USER_LOCATION);
-                setLocationMessage('Using Half Way Tree as the Jamaica demo starting point.');
-              }}
-            >
-              Half Way Tree demo
-            </button>
-          </div>
-
-          <p className="yard-helper-copy">{locationMessage}</p>
-        </section>
-
-        <section className="yard-card">
-          <div className="yard-section-heading">
-            <div>
-              <p className="yard-eyebrow">Nearest stop to you</p>
-              <h2>{closestStop?.name ?? 'Finding the closest stop...'}</h2>
-            </div>
-            {closestStop ? <span className="yard-distance-pill">{walkingMinutes} min walk</span> : null}
-          </div>
-
-          {closestStop ? (
-            <p className="yard-supporting-copy">{formatDistance(closestStop.distanceKm)} away from your current demo location.</p>
-          ) : null}
-
-          <div className="yard-arrival-list">
-            {nextBuses.length > 0 ? (
-              nextBuses.map((bus) => (
-                <article key={bus.id} className="yard-arrival-card">
-                  <div>
-                    <div className="yard-arrival-title">
-                      <span className="yard-route-pill" style={{ '--route-color': ROUTE_COLORS[bus.routeNumber] || '#0f172a' }}>
-                        {bus.routeNumber}
-                      </span>
-                      <strong>{bus.destination}</strong>
-                    </div>
-                    <p>{bus.routeName}</p>
-                  </div>
-                  <span className="yard-eta-pill">{formatMinutes(bus.etaMinutes)}</span>
-                </article>
-              ))
-            ) : (
-              <div className="yard-empty-state">
-                The simulation is warming up. Your next buses will appear here as the demo vehicles move.
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="yard-card">
-          <p className="yard-eyebrow">Best bus to take</p>
-          <label className="yard-field" htmlFor="yard-destination">
-            <span>Where are you going?</span>
-            <select
-              id="yard-destination"
-              value={selectedPlaceId}
-              onChange={(event) => setSelectedPlaceId(event.target.value)}
-            >
-              <option value="">Choose a common Kingston destination</option>
-              {JAMAICA_PLACES.map((place) => (
-                <option key={place.id} value={place.id}>
-                  {place.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {!selectedPlace ? (
-            <div className="yard-empty-state">
-              Pick a landmark or major stop to see which bus to board from your nearest useful stop.
-            </div>
-          ) : null}
-
-          {selectedPlace && recommendation ? (
-            <article className="yard-recommendation-card">
-              <div className="yard-section-heading">
-                <div>
-                  <h3>{selectedPlace.label}</h3>
-                  <p>{selectedPlace.description}</p>
-                </div>
-                <span className="yard-score-pill">
-                  {recommendation.transferCount === 0 ? 'Direct trip' : '1 transfer'}
-                </span>
-              </div>
-
-              <p className="yard-plan-summary">
-                Walk to <strong>{recommendation.originStop.name}</strong>, then{' '}
-                {recommendation.type === 'walk'
-                  ? 'you are already at the destination stop.'
-                  : recommendation.transferCount === 0
-                    ? `take route ${recommendation.routeNumbers[0]} straight to ${recommendation.targetStopName}.`
-                    : `take route ${recommendation.routeNumbers[0]} and transfer once to route ${recommendation.routeNumbers[1]}.`}
-              </p>
-
-              <div className="yard-leg-list">
-                {recommendation.type === 'walk' ? (
-                  <div className="yard-leg-card">
-                    <strong>Walk only</strong>
-                    <p>You are already close enough to the destination stop to walk there in the demo.</p>
-                  </div>
-                ) : (
-                  recommendation.legs.map((leg, index) => (
-                    <div key={`${leg.routeNumber}-${leg.boardStopName}-${leg.exitStopName}`} className="yard-leg-card">
-                      <div className="yard-arrival-title">
-                        <span className="yard-route-pill" style={{ '--route-color': ROUTE_COLORS[leg.routeNumber] || '#0f172a' }}>
-                          {leg.routeNumber}
-                        </span>
-                        <strong>
-                          {index === 0 ? `Board at ${leg.boardStopName}` : `Transfer at ${leg.boardStopName}`}
-                        </strong>
-                      </div>
-                      <p>Ride until {leg.exitStopName}.</p>
-                      <span className="yard-inline-note">
-                        {recommendation.liveEtaMinutes[index] === null
-                          ? 'Next simulated bus is still looping into view.'
-                          : `Next bus reaches ${leg.boardStopName} in about ${formatMinutes(recommendation.liveEtaMinutes[index])}.`}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </article>
-          ) : null}
-        </section>
-      </aside>
-
-      <main className="yard-map-panel">
-        <div className="yard-map-topbar">
-          <div>
-            <p className="yard-eyebrow">Jamaica hackathon demo</p>
-            <strong>Kingston / St. Andrew bus simulation</strong>
-          </div>
-          <span className="yard-map-badge">{vehicles.length} buses moving now</span>
-        </div>
-
-        <div className="yard-map-stage">
-          <MapContainer center={KINGSTON_CENTER} zoom={DEFAULT_ZOOM} className="yard-map-canvas" zoomControl={false}>
-            <TileLayer
-              attribution="&copy; OpenStreetMap contributors"
-              key={darkMode ? 'dark' : 'light'}
-              url={darkMode ? DARK_TILE_URL : TILE_URL}
-            />
-            <MapController focusTarget={focusTarget} />
-
-            {ROUTES.map((route) => {
-              const isHighlighted = highlightedRoutes.size === 0 || highlightedRoutes.has(route.number);
-              return (
-                <Polyline
-                  key={route.id}
-                  positions={route.coordinates}
-                  color={ROUTE_COLORS[route.number] || '#475569'}
-                  weight={isHighlighted ? 6 : 3}
-                  opacity={isHighlighted ? 0.88 : 0.22}
-                >
-                  <Popup>
-                    <div className="yard-map-popup">
-                      <strong>Route {route.number}</strong>
-                      <p>{route.name}</p>
-                    </div>
-                  </Popup>
-                </Polyline>
-              );
-            })}
-
+          {/* Nearby stops (yellow/black dots like NYC) */}
+          {highlightedStops.map((stop) => (
             <CircleMarker
-              center={[userLocation.lat, userLocation.lng]}
-              radius={8}
-              fillColor="#2563eb"
+              key={`${stop.kind}-${stop.name}`}
+              center={[stop.lat, stop.lng]}
+              radius={5}
+              fillColor={stop.kind === 'closest' ? '#facc15' : '#ffffff'}
               fillOpacity={1}
-              stroke={false}
+              color="#0f172a"
+              weight={2}
             >
               <Popup>
-                <div className="yard-map-popup">
-                  <strong>You are here</strong>
-                  <p>{userLocation.label}</p>
+                <div className="map-popup">
+                  <strong>{stop.name}</strong>
+                  <p>{stop.kind === 'closest' ? 'Nearest stop' : 'Trip marker'}</p>
                 </div>
               </Popup>
             </CircleMarker>
-            <CircleMarker
-              center={[userLocation.lat, userLocation.lng]}
-              radius={18}
-              fillColor="#2563eb"
-              fillOpacity={0.18}
-              stroke={false}
-            />
+          ))}
 
-            {highlightedStops.map((stop) => (
-              <CircleMarker
-                key={`${stop.kind}-${stop.name}`}
-                center={[stop.lat, stop.lng]}
-                radius={stop.kind === 'closest' ? 9 : 7}
-                fillColor={stop.kind === 'closest' ? '#f59e0b' : '#ffffff'}
-                fillOpacity={1}
-                color={stop.kind === 'destination' ? '#0f766e' : '#0f172a'}
-                weight={3}
-              >
-                <Popup>
-                  <div className="yard-map-popup">
-                    <strong>{stop.name}</strong>
-                    <p>{stop.kind === 'closest' ? 'Nearest stop to you' : 'Trip marker'}</p>
-                  </div>
-                </Popup>
-              </CircleMarker>
-            ))}
+          {/* Bus vehicles — styled as NYC-style white circles with route label */}
+          {vehicles.map((vehicle) => (
+            <Marker
+              key={vehicle.id}
+              position={[vehicle.lat, vehicle.lng]}
+              icon={divIcon({
+                className: 'nyc-bus-marker-wrapper',
+                html: `<button class="nyc-bus-marker" style="border-color: ${getMarkerColor(vehicle.route)};">
+                         ${vehicle.route}
+                       </button>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14],
+              })}
+              eventHandlers={{
+                click: () => focusMapPoint(vehicle.lng, vehicle.lat, 15),
+              }}
+            >
+              <Popup>
+                <div className="map-popup">
+                  <strong>Route {vehicle.route}</strong>
+                  <p>{ROUTES_BY_NUMBER.get(vehicle.route)?.name ?? 'Simulation bus'}</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </div>
 
-            {vehicles.map((vehicle) => (
-              <Marker
-                key={vehicle.id}
-                position={[vehicle.lat, vehicle.lng]}
-                icon={createBusIcon(vehicle.route)}
-              >
-                <Popup>
-                  <div className="yard-map-popup">
-                    <strong>Route {vehicle.route}</strong>
-                    <p>{ROUTES_BY_NUMBER.get(vehicle.route)?.name ?? 'Simulation bus'}</p>
+      {/* Dark sidebar overlay (identical to NYC lab) */}
+      <div className="nyc-controls">
+        <header className="nyc-topbar">
+          <div className="nyc-brand">
+            <span className="nyc-mode-tag">Kingston pilot simulation</span>
+            <h1>Kingston Bus Lab</h1>
+            <p>{userLocation.source === 'gps' ? userLocation.label : `Using ${userLocation.label}`}</p>
+          </div>
+
+          <div className="nyc-topbar-actions">
+            <button type="button" className="nyc-secondary-button" onClick={handleUseMyLocation}>
+              Use my location
+            </button>
+            <button
+              type="button"
+              className="nyc-secondary-button"
+              onClick={() => {
+                setUserLocation(DEFAULT_USER_LOCATION);
+                setMapFocus({ center: KINGSTON_CENTER, zoom: DEFAULT_ZOOM });
+                setLocationMessage('');
+              }}
+            >
+              Half Way Tree
+            </button>
+          </div>
+
+          <div className="nyc-status-row">
+            <span>Updated just now</span>
+            <span>{closestStop ? `Closest stop: ${closestStop.name}` : 'Finding nearest stop...'}</span>
+          </div>
+
+          {locationMessage && (
+            <div className="nyc-empty-state" style={{ marginTop: 0 }}>
+              <p>{locationMessage}</p>
+            </div>
+          )}
+        </header>
+
+        <section className="nyc-panel">
+          <div className="nyc-panel-tabs" role="tablist" aria-label="Kingston transit tools">
+            <button
+              type="button"
+              className={`nyc-panel-tab ${selectedTab === 'nearby' ? 'is-active' : ''}`}
+              onClick={() => setSelectedTab('nearby')}
+            >
+              Nearby
+            </button>
+            <button
+              type="button"
+              className={`nyc-panel-tab ${selectedTab === 'trip' ? 'is-active' : ''}`}
+              onClick={() => setSelectedTab('trip')}
+            >
+              Trip
+            </button>
+          </div>
+
+          {selectedTab === 'nearby' && (
+            <div className="nyc-panel-body">
+              <div className="nyc-summary-row">
+                <div className="nyc-summary-card">
+                  <span className="nyc-summary-label">Nearby stops</span>
+                  <strong>{ALL_STOPS.length}</strong>
+                </div>
+                <div className="nyc-summary-card">
+                  <span className="nyc-summary-label">Live buses</span>
+                  <strong>{vehicles.length}</strong>
+                </div>
+              </div>
+
+              {closestStop && (
+                <div className="nyc-section">
+                  <div className="nyc-section-header">
+                    <div>
+                      <h2>Closest stop</h2>
+                      <p>{closestStop.name} — {formatDistance(closestStop.distanceKm)} away ({walkingMinutes} min walk)</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="nyc-secondary-button"
+                      onClick={() => focusMapPoint(closestStop.lng, closestStop.lat, 17)}
+                    >
+                      Focus stop
+                    </button>
                   </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </div>
-      </main>
+                </div>
+              )}
+
+              <div className="nyc-section">
+                <div className="nyc-section-header">
+                  <div>
+                    <h2>Arrivals at your closest stop</h2>
+                    <p>Live arrivals from the simulation buses.</p>
+                  </div>
+                </div>
+
+                {nextBuses.length === 0 ? (
+                  <div className="nyc-empty-state">
+                    <p>The simulation is warming up. Buses will appear here as they approach.</p>
+                  </div>
+                ) : (
+                  <div className="nyc-arrivals-list">
+                    {nextBuses.map((bus) => (
+                      <button
+                        key={bus.id}
+                        type="button"
+                        className="nyc-arrival-card"
+                        onClick={() => {
+                          const vehicle = vehicles.find((v) => v.route === bus.routeNumber);
+                          if (vehicle) {
+                            focusMapPoint(vehicle.lng, vehicle.lat, 17);
+                          }
+                        }}
+                      >
+                        <div>
+                          <div className="nyc-arrival-title">
+                            <span className="nyc-route-pill">{bus.routeNumber}</span>
+                            <strong>{bus.destination || 'Destination pending'}</strong>
+                          </div>
+                          <p>{bus.routeName}</p>
+                        </div>
+                        <span className="nyc-eta-pill">{formatMinutes(bus.etaMinutes)}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'trip' && (
+            <div className="nyc-panel-body">
+              <div className="nyc-section">
+                <div className="nyc-section-header">
+                  <div>
+                    <h2>Bus trip planner</h2>
+                    <p>Choose a Kingston destination to see the best route recommendation.</p>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 12 }}>
+                  <label className="nyc-field-label" htmlFor="yard-destination" style={{ display: 'block', marginBottom: 8 }}>
+                    Where are you going?
+                  </label>
+                  <select
+                    id="yard-destination"
+                    className="nyc-input"
+                    value={selectedPlaceId}
+                    onChange={(event) => setSelectedPlaceId(event.target.value)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="">Choose a common Kingston destination</option>
+                    {JAMAICA_PLACES.map((place) => (
+                      <option key={place.id} value={place.id}>
+                        {place.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {!selectedPlace && (
+                  <div className="nyc-empty-state">
+                    <p>Pick a landmark or major stop to see which bus to board from your nearest stop.</p>
+                  </div>
+                )}
+
+                {selectedPlace && recommendation && (
+                  <div className="nyc-trip-list" style={{ marginTop: 14 }}>
+                    <button type="button" className="nyc-trip-card is-active">
+                      <div className="nyc-trip-topline">
+                        <strong>{selectedPlace.label}</strong>
+                        <span className="nyc-eta-pill">
+                          {recommendation.transferCount === 0 ? 'Direct' : '1 transfer'}
+                        </span>
+                      </div>
+
+                      <p className="nyc-trip-copy">
+                        Walk to <strong>{recommendation.originStop.name}</strong>, then{' '}
+                        {recommendation.type === 'walk'
+                          ? 'you are already at the destination stop.'
+                          : recommendation.transferCount === 0
+                            ? `take route ${recommendation.routeNumbers[0]} to ${recommendation.targetStopName}.`
+                            : `take route ${recommendation.routeNumbers[0]} → transfer to route ${recommendation.routeNumbers[1]}.`}
+                      </p>
+
+                      <div className="nyc-trip-steps">
+                        {recommendation.type === 'walk' ? (
+                          <div className="nyc-trip-step">
+                            <strong>Walk only</strong>
+                            <p>Already close enough to walk to the destination stop.</p>
+                          </div>
+                        ) : (
+                          recommendation.legs.map((leg, index) => (
+                            <div key={`${leg.routeNumber}-${leg.boardStopName}-${leg.exitStopName}`} className="nyc-trip-step">
+                              <strong>
+                                <span className="nyc-route-pill" style={{ marginRight: 8 }}>{leg.routeNumber}</span>
+                                {index === 0 ? `Board at ${leg.boardStopName}` : `Transfer at ${leg.boardStopName}`}
+                              </strong>
+                              <p>
+                                Ride until {leg.exitStopName}.{' '}
+                                {recommendation.liveEtaMinutes[index] === null
+                                  ? 'Bus is still looping into view.'
+                                  : `Next bus in ~${formatMinutes(recommendation.liveEtaMinutes[index])}.`}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }

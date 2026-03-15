@@ -89,4 +89,4 @@ cd client && npm install && npm run dev
 | 42 | UTech to Constant Spring | Orange |
 
 ---
-**YardRyde** — Built for the Intellibus Hackathon 2026. Bringing transparency to Jamaican transit, one stop at a time.
+**YardRyde** — Launched today for the Intellibus Hackathon 2026. Bringing transparency to Jamaican transit, one stop at a time.
