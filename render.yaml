@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: transit-tracker
+    runtime: docker
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: TRANSIT_DATA_SOURCE
+        value: mta
+      - key: VITE_DATA_SOURCE
+        value: nyc
+      - key: MTA_BUSTIME_API_KEY
+        sync: false
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
